@@ -16,17 +16,8 @@ beginning of line."
     (when (= prev (point))
       (beginning-of-line))))
 
-(defun c-find-corresponding-file ()
-  "Switch to a buffer visiting the corresponding C/header file."
-  (interactive)
-  (let* ((file-split (split-string (buffer-name) "\\."))
-         (file-stem (car file-split))
-         (file-suffix (cadr file-split))
-         (file-name (concat file-stem
-                            (if (string-equal file-suffix "h")
-                                ".c" ".h"))))
-    (when (file-readable-p file-name)
-      (find-file file-name))))
+;; Find the header or source file corresponding to this file.
+(defalias 'c-find-corresponding-file 'ff-find-other-file)
 
 (defun c-include-header (header)
   "Append a file to the list of included header files."
@@ -34,6 +25,28 @@ beginning of line."
   (save-excursion
     (goto-char (point-min))
     (insert "#include <" header ".h>\n")))
+
+(defun dired-beginning-of-buffer ()
+  "Jump to the first file listed in Dired."
+  (interactive)
+  (goto-char (point-min))
+  (dired-next-line 2))
+
+(defun dired-end-of-buffer ()
+  "Jump to the last file listed in Dired."
+  (interactive)
+  (goto-char (point-max))
+  (dired-next-line -1))
+
+(defadvice dired-next-line (after dired-next-line (arg) activate)
+  "Don't move past the last file in Dired."
+  (when (= (point-max) (point))
+    (dired-previous-line arg)))
+
+(defadvice dired-previous-line (around dired-previous-line (arg) activate)
+  "Don't move before the first in Dired."
+  (when (< 3 (line-number-at-pos))
+    ad-do-it))
 
 (defadvice eval-last-sexp (around replace-sexp (arg) activate)
   "Replace sexp when called with a prefix argument."
@@ -63,13 +76,13 @@ beginning of line."
       (insert "-")))
   (insert " [ " title " ]"))
 
-(defun kill-region-or-backward-kill-word (&optional arg region)
-  "`kill-region' if the region is active, otherwise `backward-kill-word'"
+(defun kill-region-or-backward-kill-sexp (&optional arg region)
+  "`kill-region' if the region is active, otherwise `backward-kill-sexp'"
   (interactive
    (list (prefix-numeric-value current-prefix-arg) (use-region-p)))
   (if region
       (kill-region (region-beginning) (region-end))
-    (backward-kill-word arg)))
+    (backward-kill-sexp arg)))
 
 (defun mail-add-contact (full-name alias email-address)
   (interactive "sFull name: \nsAlias: \nsEmail address: ")
@@ -93,8 +106,8 @@ beginning of line."
   (interactive)
   (let ((beginning (if (region-active-p) (region-beginning) (point-min)))
         (end (if (region-active-p) (region-end) (point-max))))
-    (whitespace-cleanup)
     (indent-region beginning end nil)
+    (whitespace-cleanup)
     (untabify beginning end)))
 
 (provide 'defuns)

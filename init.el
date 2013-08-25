@@ -66,7 +66,7 @@
 (global-set-key (kbd "C-c t")   'google-translate-at-point)
 (global-set-key (kbd "C-c v")   'magit-status)
 (global-set-key (kbd "C-c w")   'compare-windows)
-(global-set-key (kbd "C-w")     'kill-region-or-backward-kill-word)
+(global-set-key (kbd "C-w")     'kill-region-or-backward-kill-sexp)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "C-x k")   'kill-this-buffer)
 (global-set-key (kbd "C-z")     'bury-buffer)
@@ -139,12 +139,41 @@
     (read-kbd-macro paredit-backward-delete-key) nil))
 (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
 
+;; ------------------------------------------------------------------ [ CSS ]
+(add-hook
+ 'css-mode-hook
+ '(lambda ()
+    (rainbow-mode 1)
+    (diminish 'rainbow-mode)))
+
 ;; ---------------------------------------------------------------- [ Dired ]
+(add-hook
+ 'dired-load-hook
+ '(lambda ()
+    (load "dired-x")
+
+    (define-key dired-mode-map
+      (vector 'remap 'end-of-buffer) 'dired-end-of-buffer)
+
+    (define-key dired-mode-map
+      (vector 'remap 'beginning-of-buffer) 'dired-beginning-of-buffer)
+
+    (define-key dired-mode-map
+      (vector 'remap 'dired-goto-file) 'dired)))
+
+(add-hook
+ 'dired-mode-hook
+ '(lambda ()
+    ;; Omit "uninteresting" files
+    (dired-omit-mode 1)
+    (diminish 'dired-omit-mode)))
+
 ;; Make file sizes human-readable, and hide time stamps
 (setq-default dired-listing-switches "-alh --time-style=+")
 
 (setq
  dired-dwim-target t                   ; Let Dired guess target directory
+ dired-omit-verbose nil                ; Omit files, but be quiet about it
  dired-recursive-copies 'always        ; Don't ask, just copy
  global-auto-revert-non-file-buffers t ; Auto-refresh the file list
  image-dired-show-all-from-dir-max-files 500)
@@ -188,6 +217,9 @@
 ;; ------------------------------------------------------------------ [ ERC ]
 (setq erc-fill-column fill-column)
 
+;; --------------------------------------------------------------- [ Factor ]
+(setq fuel-factor-root-dir "/home/simen/src/factor")
+
 ;; -------------------------------------------------------------- [ Flymake ]
 (setq help-at-pt-display-when-idle t ; Activate echoed help messages
       help-at-pt-set-timer        0) ; Echo help instantly
@@ -207,6 +239,7 @@
 
 ;; ----------------------------------------------------------- [ JavaScript ]
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(setq nodejs-repl-command "nodejs")
 
 ;; ----------------------------------------------------------------- [ Lisp ]
 (require 'paredit)
@@ -362,8 +395,10 @@
 (setq uniquify-buffer-name-style 'forward)
 
 ;; ------------------------------------------------------------- [ Diminish ]
-(dolist (mode '(abbrev-mode auto-fill-function eldoc-mode paredit-mode))
-  (diminish mode))
+(mapc 'diminish '(abbrev-mode
+                  auto-fill-function
+                  eldoc-mode
+                  paredit-mode))
 
 ;;---------------------------------------------------------------- [ Custom ]
 (custom-set-faces
@@ -373,4 +408,6 @@
  ;; If there is more than one, they won't work right.
  '(erc-input-face ((t (:foreground "#888a85"))) t)
  '(erc-my-nick-face ((t (:foreground "#888a85" :weight bold))) t)
+ '(org-level-1 ((t (:inherit outline-1 :foreground "dodger blue" :weight bold :height 1.0))))
+ '(org-level-2 ((t (:inherit outline-2 :foreground "#edd400" :weight bold :height 1.0))))
  '(slime-repl-inputed-output-face ((t (:foreground "#729fcf")))))

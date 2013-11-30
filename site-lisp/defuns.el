@@ -58,6 +58,16 @@ beginning of line."
         (forward-sexp))
     ad-do-it))
 
+(defun fmt (symbols)
+  "Insert '(format t \"x1: ~a, x2: ~a, ..., xn: ~a~%)' for every
+  x separated by a space in `symbols'."
+  (interactive "MPrint symbols: ")
+  (insert
+   (format
+    "(format t \"%s: ~a~%%\" %s)"
+    (replace-regexp-in-string " " ": ~a, " symbols)
+    symbols)))
+
 (defun inc-next-number (&optional arg)
   "Increment first number found after point (ala Vim's C-a)."
   (interactive "p")
@@ -109,6 +119,11 @@ beginning of line."
     (indent-region beginning end nil)
     (whitespace-cleanup)
     (untabify beginning end)))
+
+(defun today ()
+  "Insert today's date."
+  (interactive)
+  (insert (format-time-string "%Y-%m-%d")))
 
 (provide 'defuns)
 

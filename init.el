@@ -20,7 +20,6 @@
  history-delete-duplicates      t  ; Delete duplicate history entries
  inhibit-startup-screen         t  ; No startup screen
  initial-scratch-message      nil  ; No scratch message
- iswitchb-prompt-newbuffer    nil  ; Create new buffers without confirmation
  kill-read-only-ok              t  ; Killing read-only text is OK
  password-cache-expiry        nil  ; Cache TRAMP passwords forever
  show-paren-delay               0) ; Don't delay the paren update
@@ -29,7 +28,6 @@
 (column-number-mode             1) ; Show column number
 (fset 'yes-or-no-p      'y-or-n-p) ; Make "yes/no" prompts "y/n"
 (global-auto-revert-mode        1) ; Reload files after modification
-(iswitchb-mode                  1) ; Neat buffer switching
 (menu-bar-mode                 -1) ; No menu bar
 (prefer-coding-system      'utf-8) ; Always prefer UTF-8
 (scroll-bar-mode               -1) ; No scroll bar
@@ -70,11 +68,15 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "C-x k")   'kill-this-buffer)
 (global-set-key (kbd "C-z")     'bury-buffer)
+(global-set-key (kbd "M-x")     'smex)
 (global-set-key [C-M-backspace] 'backward-kill-sexp)
 (global-set-key [f5]            '(lambda () (interactive) (revert-buffer nil t)))
 
 ;; ------------------------------------------------------------ [ Assembler ]
 (setq asm-comment-char ?#) ; '#' as comment char (default is ';')
+
+;; --------------------------------------------------------------- [ BibTeX ]
+(setq-default bibtex-dialect 'biblatex)
 
 ;; -------------------------------------------------------------------- [ C ]
 (add-hook
@@ -143,6 +145,7 @@
 (add-hook
  'css-mode-hook
  '(lambda ()
+    (electric-pair-mode 1)
     (rainbow-mode 1)
     (diminish 'rainbow-mode)))
 
@@ -159,7 +162,7 @@
       (vector 'remap 'beginning-of-buffer) 'dired-beginning-of-buffer)
 
     (define-key dired-mode-map
-      (vector 'remap 'dired-goto-file) 'dired)))
+      (vector 'remap 'dired-goto-file) 'find-file)))
 
 (add-hook
  'dired-mode-hook
@@ -237,8 +240,16 @@
 ;; -------------------------------------------------------------- [ Haskell ]
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
+;; ------------------------------------------------------------- [ Ido mode ]
+(ido-mode 'buffers)
+(ido-vertical-mode 1)
+
 ;; ----------------------------------------------------------- [ JavaScript ]
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+(add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
+
+(setq js2-global-externs '("_" "$"))
+
 (setq nodejs-repl-command "nodejs")
 
 ;; ----------------------------------------------------------------- [ Lisp ]
@@ -246,26 +257,28 @@
 
 (autoload 'let-fix "autolet" "Automatic let-form fixer" t)
 
-;; Ultimate Lisp eye candy: display lambda as λ
-(defun sm-lambda-mode-hook ()
+(defun setup-lisp ()
+  (auto-fill-mode 1)
+  (paredit-mode 1)
+
+  ;; Ultimate Lisp eye candy: display lambda as λ
   (font-lock-add-keywords
    nil `(("\\<lambda\\>"
           (0 (progn (compose-region (match-beginning 0) (match-end 0)
                                     ,(make-char 'greek-iso8859-7 107))
                     nil))))))
 
-(dolist (h '(emacs-lisp-mode-hook
-             geiser-repl-mode-hook
-             ielm-mode-hook
-             inferior-lisp-mode-hook
-             inferior-scheme-mode-hook
-             lisp-interaction-mode-hook
-             lisp-mode-hook
-             scheme-mode-hook
-             slime-repl-mode-hook))
-  (add-hook h (lambda () (paredit-mode 1)))
-  (add-hook h 'sm-lambda-mode-hook)
-  (add-hook h (lambda () (auto-fill-mode 1))))
+(mapc
+ (lambda (m) (add-hook m 'setup-lisp))
+ '(emacs-lisp-mode-hook
+   geiser-repl-mode-hook
+   ielm-mode-hook
+   inferior-lisp-mode-hook
+   inferior-scheme-mode-hook
+   lisp-interaction-mode-hook
+   lisp-mode-hook
+   scheme-mode-hook
+   slime-repl-mode-hook))
 
 ;; ----------------------------------------------------------------- [ Mail ]
 (require 'message)
@@ -344,6 +357,12 @@
             ("\\.mm\\'" . default)
             ("\\.x?html?\\'" . default)
             ("\\.pdf\\'" . "evince %s")))))
+
+;; Use latexmk for LaTeX export
+(setq
+ org-latex-pdf-process
+ '("latexmk \
+-pdflatex='pdflatex -shell-escape -interaction nonstopmode'-pdf -f %f"))
 
 ;; ------------------------------------------------------------- [ Packages ]
 ;; Extra package repositories

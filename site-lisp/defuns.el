@@ -116,9 +116,9 @@ beginning of line."
   (interactive)
   (let ((beginning (if (region-active-p) (region-beginning) (point-min)))
         (end (if (region-active-p) (region-end) (point-max))))
-    (indent-region beginning end nil)
+    (indent-region beginning end)
     (whitespace-cleanup)
-    (untabify beginning end)))
+    (untabify beginning (if (< end (point-max)) end (point-max)))))
 
 (defun today ()
   "Insert today's date."

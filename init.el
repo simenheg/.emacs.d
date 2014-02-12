@@ -8,7 +8,7 @@
  indent-tabs-mode             nil  ; Use spaces for indentation
  major-mode            'text-mode  ; text-mode as the default for new buffers
  split-width-threshold        100  ; Prefer vertical window splits
- fill-column                   76) ; Lines break at column 76
+ fill-column                   78) ; Lines break at column 78
 
 (setq
  comint-input-ignoredups        t  ; Ignore duplicates in Comint history
@@ -50,16 +50,16 @@
 (global-set-key (kbd "C-+")     '(lambda () (interactive) (inc-next-number -1)))
 (global-set-key (kbd "C-=")     'inc-next-number)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
-(global-set-key (kbd "C-c C-c") 'recompile)
-(global-set-key (kbd "C-c C-f") 'browse-url-firefox)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-set-key (kbd "C-c T")   'google-translate-query-translate)
 (global-set-key (kbd "C-c a")   'org-agenda-list)
 (global-set-key (kbd "C-c b")   'org-iswitchb)
 (global-set-key (kbd "C-c c")   'org-capture)
-(global-set-key (kbd "C-c l")   'org-store-link)
+(global-set-key (kbd "C-c e")   'mc/edit-lines)
+(global-set-key (kbd "C-c l")   'mc/mark-all-like-this)
 (global-set-key (kbd "C-c m")   'rmail)
+(global-set-key (kbd "C-c n")   'mc/mark-next-like-this)
 (global-set-key (kbd "C-c p")   'list-packages)
 (global-set-key (kbd "C-c t")   'google-translate-at-point)
 (global-set-key (kbd "C-c v")   'magit-status)
@@ -118,8 +118,6 @@
 
 ;; ---------------------------------------------------------- [ Common Lisp ]
 (setq inferior-lisp-program "sbcl")
-(setq slime-lisp-implementations
-      `((sbcl ("sbcl" "--core" ,(conf "sbcl.core-for-slime")))))
 
 (declare-function slime-connected-p "slime")
 (declare-function slime "slime")
@@ -219,9 +217,6 @@
 
 ;; ------------------------------------------------------------------ [ ERC ]
 (setq erc-fill-column fill-column)
-
-;; --------------------------------------------------------------- [ Factor ]
-(setq fuel-factor-root-dir "/home/simen/src/factor")
 
 ;; -------------------------------------------------------------- [ Flymake ]
 (setq help-at-pt-display-when-idle t ; Activate echoed help messages
@@ -362,7 +357,7 @@
 (setq
  org-latex-pdf-process
  '("latexmk \
--pdflatex='pdflatex -shell-escape -interaction nonstopmode'-pdf -f %f"))
+-pdflatex='pdflatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
 
 ;; ------------------------------------------------------------- [ Packages ]
 ;; Extra package repositories
@@ -377,6 +372,8 @@
 (defalias 'perl-mode 'cperl-mode)
 
 ;; ------------------------------------------------------------------ [ RDF ]
+(require 'rdf-prefix)
+
 (autoload 'ttl-mode "ttl-mode" "Major mode for OWL or Turtle files" t)
 
 (dolist (ext '("\\.n3" "\\.ttl"))
@@ -387,9 +384,6 @@
 ;; --------------------------------------------------------------- [ Scheme ]
 (setq geiser-active-implementations '(guile)
       geiser-repl-query-on-kill-p nil)
-
-;; --------------------------------------------------------------- [ Simula ]
-(setq simula-tab-always-indent t) ; Always indent, never insert tabs
 
 ;; ------------------------------------------------------------ [ Skeletons ]
 (auto-insert-mode 1) ; Auto insert templates into new files ...

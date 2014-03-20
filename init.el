@@ -52,10 +52,7 @@
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
-(global-set-key (kbd "C-c T")   'google-translate-query-translate)
 (global-set-key (kbd "C-c a")   'org-agenda-list)
-(global-set-key (kbd "C-c b")   'org-iswitchb)
-(global-set-key (kbd "C-c c")   'org-capture)
 (global-set-key (kbd "C-c e")   'mc/edit-lines)
 (global-set-key (kbd "C-c l")   'mc/mark-all-like-this)
 (global-set-key (kbd "C-c m")   'rmail)
@@ -106,7 +103,7 @@
 (setq calendar-location-name  "Oslo, Norway"
       calendar-latitude       60.0
       calendar-longitude      10.7
-      calendar-week-start-day 1) ; Weeks start on monday
+      calendar-week-start-day 1) ; Weeks start on Monday
 
 ;; Display time in 24 hour format
 (setq calendar-time-display-form
@@ -118,13 +115,6 @@
 
 ;; ---------------------------------------------------------- [ Common Lisp ]
 (setq inferior-lisp-program "sbcl")
-
-(declare-function slime-connected-p "slime")
-(declare-function slime "slime")
-(add-hook 'slime-mode-hook
-          (lambda ()
-            (unless (slime-connected-p)
-              (save-excursion (slime)))))
 
 ;; More sensible `loop' indentation
 (setq lisp-loop-forms-indentation   2
@@ -195,8 +185,8 @@
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ; One line at a time
 (setq mouse-wheel-progressive-speed nil) ; Don't accelerate scrolling
 
-;; Don't bother unless the file *really* is large (50 MB+)
-(setq large-file-warning-threshold 50000000)
+;; Don't bother to ask unless the file *really* is large (100 MB+)
+(setq large-file-warning-threshold 100000000)
 
 ;; Set current buffer as the window name
 (setq-default frame-title-format (list "%b %f"))
@@ -275,6 +265,20 @@
    scheme-mode-hook
    slime-repl-mode-hook))
 
+;; ------------------------------------------------------------------- [ Lua ]
+;; Basic LӦVE compilation support
+(add-hook
+ 'lua-modee-hook
+ (lambda ()
+   (global-set-key "\C-c\C-c" 'compile)
+   (when (file-exists-p "main.lua")
+     (set (make-local-variable 'compile-command) "love . ")
+     (add-to-list
+      'compilation-error-regexp-alist 'love t)
+     (add-to-list
+      'compilation-error-regexp-alist-alist
+      '(love "^Error: Syntax error: \\(.*?\\):\\([0-9]+\\):.*$" 1 2) t))))
+
 ;; ----------------------------------------------------------------- [ Mail ]
 (require 'message)
 (require 'nnheader)
@@ -324,6 +328,7 @@
 (add-to-list 'auto-mode-alist '("\\.owl$" . omn-mode))
 
 ;; ------------------------------------------------------------------ [ Org ]
+;; Org agenda
 (setq
  org-agenda-files '("~/life.org")
  org-agenda-start-on-weekday nil
@@ -353,6 +358,9 @@
             ("\\.x?html?\\'" . default)
             ("\\.pdf\\'" . "evince %s")))))
 
+;; Active org export backends
+(setq org-export-backends '(ascii html latex md))
+
 ;; Use latexmk for LaTeX export
 (setq
  org-latex-pdf-process
@@ -368,12 +376,7 @@
    ("org"       . "http://orgmode.org/elpa/")
    ("MELPA"     . "http://melpa.milkbox.net/packages/")))
 
-;; ----------------------------------------------------------------- [ Perl ]
-(defalias 'perl-mode 'cperl-mode)
-
 ;; ------------------------------------------------------------------ [ RDF ]
-(require 'rdf-prefix)
-
 (autoload 'ttl-mode "ttl-mode" "Major mode for OWL or Turtle files" t)
 
 (dolist (ext '("\\.n3" "\\.ttl"))

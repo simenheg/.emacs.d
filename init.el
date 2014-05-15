@@ -1,8 +1,47 @@
 ;; init.el --- Personal Emacs configurations
 ;; Author: Simen Heggestøyl <simenheg@ifi.uio.no>
 
-(set-language-environment "UTF-8")
+;; Extra package repositories
+(setq
+ package-archives
+ '(("gnu" . "http://elpa.gnu.org/packages/")
+   ("marmalade" . "http://marmalade-repo.org/packages/")
+   ("org" . "http://orgmode.org/elpa/")
+   ("MELPA" . "http://melpa.milkbox.net/packages/")))
+
 (package-initialize)
+
+;; Extra packages
+(defvar extra-packages
+  '(ace-jump-mode
+    diminish
+    fuel
+    geiser
+    google-translate
+    ido-vertical-mode
+    js2-mode
+    json-mode
+    leuven-theme
+    lua-mode
+    magit
+    markdown-mode
+    maude-mode
+    multiple-cursors
+    org-plus-contrib
+    paredit
+    rainbow-mode
+    rdf-prefix
+    smex
+    sparql-mode
+    ttl-mode
+    vala-mode))
+
+;; Install missing packages
+(dolist (p extra-packages)
+  (unless (package-installed-p p)
+    (package-install p)))
+
+(set-language-environment "UTF-8")
 
 (setq-default
  indent-tabs-mode             nil  ; Use spaces for indentation
@@ -47,6 +86,7 @@
 (require 'defuns)
 
 ;; Global keybinds
+(global-set-key (kbd "C-'")     'org-cycle-agenda-files)
 (global-set-key (kbd "C-+")     '(lambda () (interactive) (inc-next-number -1)))
 (global-set-key (kbd "C-=")     'inc-next-number)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
@@ -111,7 +151,7 @@
                  (if time-zone " (") time-zone (if time-zone ")")))
 
 ;; ---------------------------------------------------------- [ Color-theme ]
-(load-theme 'tangotango t)
+(load-theme 'leuven t)
 
 ;; ---------------------------------------------------------- [ Common Lisp ]
 (setq inferior-lisp-program "sbcl")
@@ -208,6 +248,10 @@
 ;; ------------------------------------------------------------------ [ ERC ]
 (setq erc-fill-column fill-column)
 
+;; --------------------------------------------------------------- [ Factor ]
+(setq fuel-factor-root-dir "~/src/factor")
+(add-hook 'factor-mode-hook '(lambda () (set-fill-column 64)))
+
 ;; -------------------------------------------------------------- [ Flymake ]
 (setq help-at-pt-display-when-idle t ; Activate echoed help messages
       help-at-pt-set-timer        0) ; Echo help instantly
@@ -233,7 +277,7 @@
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
 
-(setq js2-global-externs '("_" "$"))
+(setq js2-global-externs '("_" "$" "Mustache"))
 
 (setq nodejs-repl-command "nodejs")
 
@@ -359,22 +403,7 @@
             ("\\.pdf\\'" . "evince %s")))))
 
 ;; Active org export backends
-(setq org-export-backends '(ascii html latex md))
-
-;; Use latexmk for LaTeX export
-(setq
- org-latex-pdf-process
- '("latexmk \
--pdflatex='pdflatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
-
-;; ------------------------------------------------------------- [ Packages ]
-;; Extra package repositories
-(setq
- package-archives
- '(("gnu"       . "http://elpa.gnu.org/packages/")
-   ("marmalade" . "http://marmalade-repo.org/packages/")
-   ("org"       . "http://orgmode.org/elpa/")
-   ("MELPA"     . "http://melpa.milkbox.net/packages/")))
+(setq org-export-backends '(ascii html latex beamer md))
 
 ;; ------------------------------------------------------------------ [ RDF ]
 (autoload 'ttl-mode "ttl-mode" "Major mode for OWL or Turtle files" t)
@@ -385,18 +414,8 @@
 (setq ttl-electric-semi-mode nil)
 
 ;; --------------------------------------------------------------- [ Scheme ]
-(setq geiser-active-implementations '(guile)
+(setq geiser-active-implementations '(guile racket)
       geiser-repl-query-on-kill-p nil)
-
-;; ------------------------------------------------------------ [ Skeletons ]
-(auto-insert-mode 1) ; Auto insert templates into new files ...
-(setq auto-insert-query nil) ; ... but don't ask for my permission every time
-(setq auto-insert-alist nil) ; Remove predefined skeletons
-
-(require 'skeletons)
-(define-auto-insert "\\.c\\'" 'skeleton-c)
-(define-auto-insert "\\.java\\'" 'skeleton-java)
-(define-auto-insert "\\.tex\\'" 'skeleton-latex)
 
 ;; --------------------------------------------------------------- [ SPARQL ]
 (dolist (ext '("\\.sparql" "\\.rq"))
@@ -424,6 +443,4 @@
  ;; If there is more than one, they won't work right.
  '(erc-input-face ((t (:foreground "#888a85"))) t)
  '(erc-my-nick-face ((t (:foreground "#888a85" :weight bold))) t)
- '(org-level-1 ((t (:inherit outline-1 :foreground "dodger blue" :weight bold :height 1.0))))
- '(org-level-2 ((t (:inherit outline-2 :foreground "#edd400" :weight bold :height 1.0))))
- '(slime-repl-inputed-output-face ((t (:foreground "#729fcf")))))
+ '(slime-repl-inputed-output-face ((t (:foreground "#729fcf"))) t)) 

@@ -125,6 +125,12 @@ beginning of line."
   (interactive)
   (insert (format-time-string "%Y-%m-%d")))
 
+;; Courtesy of https://github.com/larstvei/
+(defun try (url)
+  (interactive (list (read-from-minibuffer "url: ")))
+  (with-current-buffer (url-retrieve-synchronously url)
+    (eval-region (search-forward-regexp "^$") (point-max))))
+
 (provide 'defuns)
 
 ;;; defuns.el ends here

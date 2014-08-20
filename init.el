@@ -19,7 +19,9 @@
     geiser
     google-translate
     ido-vertical-mode
+    js-comint
     js2-mode
+    js2-refactor
     json-mode
     leuven-theme
     lua-mode
@@ -50,6 +52,7 @@
  fill-column                   78) ; Lines break at column 78
 
 (setq
+ auto-revert-verbose          nil  ; Be quiet about reverts
  comint-input-ignoredups        t  ; Ignore duplicates in Comint history
  compare-ignore-whitespace      t  ; Ignore whitespace differences
  default-input-method       "TeX"  ; TeX is the default toggled input method
@@ -256,9 +259,6 @@
 (setq help-at-pt-display-when-idle t ; Activate echoed help messages
       help-at-pt-set-timer        0) ; Echo help instantly
 
-;; ---------------------------------------------------------------- [ Forth ]
-(add-to-list 'auto-mode-alist '("\\.fs\\'" . forth-mode))
-
 ;; ----------------------------------------------------- [ Google Translate ]
 (autoload 'google-translate-at-point "google-translate" nil t)
 (autoload 'google-query-translate "google-translate" nil t)
@@ -274,10 +274,22 @@
 (ido-vertical-mode 1)
 
 ;; ----------------------------------------------------------- [ JavaScript ]
+(require 'js2-refactor)
+(require 'js-comint)
+
+(setq inferior-js-program-command "nodejs")
+
+(add-hook
+ 'js2-mode-hook
+ '(lambda ()
+    (yas-minor-mode 1)
+    (local-set-key (kbd "C-c C-b") 'js-send-buffer)))
+
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
 
-(setq js2-global-externs '("_" "$" "Mustache"))
+(setq js2-global-externs
+      '("_" "$" "Mustache" "location" "setInterval" "clearInterval"))
 
 (setq nodejs-repl-command "nodejs")
 
@@ -338,6 +350,7 @@
       send-mail-function            'smtpmail-send-it
       smtpmail-smtp-server          "smtp.uio.no"
       smtpmail-smtp-service         587
+      gnutls-min-prime-bits         nil
       message-default-headers       "FCC: ~/mail/sent")
 
 ;; Expand mail-aliases on `next-line' and `end-of-buffer'
@@ -396,6 +409,8 @@
 (add-hook
  'org-mode-hook
  '(lambda ()
+    (require 'ox-latex)
+    (setq org-latex-pdf-process '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
     (setq org-file-apps
           '((auto-mode . emacs)
             ("\\.mm\\'" . default)
@@ -403,7 +418,14 @@
             ("\\.pdf\\'" . "evince %s")))))
 
 ;; Active org export backends
-(setq org-export-backends '(ascii html latex beamer md))
+(setq org-export-backends '(ascii html latex md))
+
+(require 'org-bibtex)
+
+;; ---------------------------------------------------------------- [ Python ]
+(elpy-enable)
+(elpy-use-ipython)
+(add-hook 'elpy-mode-hook '(lambda () (highlight-indentation-mode 0)))
 
 ;; ------------------------------------------------------------------ [ RDF ]
 (autoload 'ttl-mode "ttl-mode" "Major mode for OWL or Turtle files" t)
@@ -414,7 +436,7 @@
 (setq ttl-electric-semi-mode nil)
 
 ;; --------------------------------------------------------------- [ Scheme ]
-(setq geiser-active-implementations '(guile racket)
+(setq geiser-active-implementations '(guile)
       geiser-repl-query-on-kill-p nil)
 
 ;; --------------------------------------------------------------- [ SPARQL ]

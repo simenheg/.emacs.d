@@ -15,6 +15,7 @@
 (defvar extra-packages
   '(ace-jump-mode
     diminish
+    elpy
     fuel
     geiser
     google-translate

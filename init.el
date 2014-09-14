@@ -37,7 +37,7 @@
     smex
     sparql-mode
     ttl-mode
-    vala-mode))
+    web-mode))
 
 ;; Install missing packages
 (dolist (p extra-packages)
@@ -49,8 +49,7 @@
 (setq-default
  indent-tabs-mode             nil  ; Use spaces for indentation
  major-mode            'text-mode  ; text-mode as the default for new buffers
- split-width-threshold        100  ; Prefer vertical window splits
- fill-column                   78) ; Lines break at column 78
+ fill-column                   79) ; Lines break at column 79
 
 (setq
  auto-revert-verbose          nil  ; Be quiet about reverts
@@ -91,7 +90,7 @@
 
 ;; Global keybinds
 (global-set-key (kbd "C-'")     'org-cycle-agenda-files)
-(global-set-key (kbd "C-+")     '(lambda () (interactive) (inc-next-number -1)))
+(global-set-key (kbd "C-+")     (lambda () (interactive) (inc-next-number -1)))
 (global-set-key (kbd "C-=")     'inc-next-number)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
@@ -111,7 +110,9 @@
 (global-set-key (kbd "C-z")     'bury-buffer)
 (global-set-key (kbd "M-x")     'smex)
 (global-set-key [C-M-backspace] 'backward-kill-sexp)
-(global-set-key [f5]            '(lambda () (interactive) (revert-buffer nil t)))
+(global-set-key [M-down]        'move-line-down)
+(global-set-key [M-up]          'move-line-up)
+(global-set-key [f5]            (lambda () (interactive) (revert-buffer nil t)))
 
 ;; ------------------------------------------------------------ [ Assembler ]
 (setq asm-comment-char ?#) ; '#' as comment char (default is ';')
@@ -174,34 +175,38 @@
 (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
 
 ;; ------------------------------------------------------------------ [ CSS ]
+(setq web-mode-css-indent-offset 4)
+
 (add-hook
  'css-mode-hook
- '(lambda ()
-    (electric-pair-mode 1)
-    (rainbow-mode 1)
-    (diminish 'rainbow-mode)))
+ (lambda ()
+   (rainbow-mode 1)
+   (diminish 'rainbow-mode)))
 
 ;; ---------------------------------------------------------------- [ Dired ]
 (add-hook
  'dired-load-hook
- '(lambda ()
-    (load "dired-x")
+ (lambda ()
+   (defvar dired-mode-map)
 
-    (define-key dired-mode-map
-      (vector 'remap 'end-of-buffer) 'dired-end-of-buffer)
+   (load "dired-x")
 
-    (define-key dired-mode-map
-      (vector 'remap 'beginning-of-buffer) 'dired-beginning-of-buffer)
+   (define-key dired-mode-map
+     (vector 'remap 'end-of-buffer) 'dired-end-of-buffer)
 
-    (define-key dired-mode-map
-      (vector 'remap 'dired-goto-file) 'find-file)))
+   (define-key dired-mode-map
+     (vector 'remap 'beginning-of-buffer) 'dired-beginning-of-buffer)
+
+   (define-key dired-mode-map
+     (vector 'remap 'dired-goto-file) 'find-file)))
 
 (add-hook
  'dired-mode-hook
- '(lambda ()
-    ;; Omit "uninteresting" files
-    (dired-omit-mode 1)
-    (diminish 'dired-omit-mode)))
+ (lambda ()
+   (declare-function dired-omit-mode "dired-x")
+   ;; Omit "uninteresting" files
+   (dired-omit-mode 1)
+   (diminish 'dired-omit-mode)))
 
 ;; Make file sizes human-readable, and hide time stamps
 (setq-default dired-listing-switches "-alh --time-style=+")
@@ -254,7 +259,7 @@
 
 ;; --------------------------------------------------------------- [ Factor ]
 (setq fuel-factor-root-dir "~/src/factor")
-(add-hook 'factor-mode-hook '(lambda () (set-fill-column 64)))
+(add-hook 'factor-mode-hook (lambda () (set-fill-column 64)))
 
 ;; -------------------------------------------------------------- [ Flymake ]
 (setq help-at-pt-display-when-idle t ; Activate echoed help messages
@@ -282,15 +287,18 @@
 
 (add-hook
  'js2-mode-hook
- '(lambda ()
-    (yas-minor-mode 1)
-    (local-set-key (kbd "C-c C-b") 'js-send-buffer)))
+ (lambda ()
+   (yas-minor-mode 1)
+   (electric-pair-mode 1)
+   (subword-mode 1)
+   (local-set-key (kbd "C-c C-b") 'js-send-buffer)))
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
 
 (setq js2-global-externs
-      '("_" "$" "Mustache" "location" "setInterval" "clearInterval"))
+      '("_" "$" "Mustache" "location" "setInterval" "clearInterval" "Ember"
+        "DS"))
 
 (setq nodejs-repl-command "nodejs")
 
@@ -409,14 +417,15 @@
 ;; are handled according to the defaults)
 (add-hook
  'org-mode-hook
- '(lambda ()
-    (require 'ox-latex)
-    (setq org-latex-pdf-process '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
-    (setq org-file-apps
-          '((auto-mode . emacs)
-            ("\\.mm\\'" . default)
-            ("\\.x?html?\\'" . default)
-            ("\\.pdf\\'" . "evince %s")))))
+ (lambda ()
+   (defvar org-latex-pdf-process)
+   (require 'ox-latex)
+   (setq org-latex-pdf-process '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
+   (setq org-file-apps
+         '((auto-mode . emacs)
+           ("\\.mm\\'" . default)
+           ("\\.x?html?\\'" . default)
+           ("\\.pdf\\'" . "evince %s")))))
 
 ;; Active org export backends
 (setq org-export-backends '(ascii html latex md))
@@ -426,7 +435,11 @@
 ;; ---------------------------------------------------------------- [ Python ]
 (elpy-enable)
 (elpy-use-ipython)
-(add-hook 'elpy-mode-hook '(lambda () (highlight-indentation-mode 0)))
+(add-hook
+ 'elpy-mode-hook
+ (lambda ()
+   (highlight-indentation-mode 0)
+   (electric-pair-mode 1)))
 
 ;; ------------------------------------------------------------------ [ RDF ]
 (autoload 'ttl-mode "ttl-mode" "Major mode for OWL or Turtle files" t)
@@ -452,6 +465,18 @@
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
 
+;; ------------------------------------------------------------- [ Web mode ]
+(dolist (ext '("\\.html" "\\.hbs" "\\.scss"))
+  (add-to-list 'auto-mode-alist (cons ext 'web-mode)))
+
+(setq web-mode-engines-alist '(("ctemplate" . "\\.html")))
+
+(add-hook
+ 'web-mode-hook
+ (lambda ()
+   (rainbow-mode 1)
+   (diminish 'rainbow-mode)))
+
 ;; ------------------------------------------------------------- [ Diminish ]
 (mapc 'diminish '(abbrev-mode
                   auto-fill-function
@@ -466,4 +491,4 @@
  ;; If there is more than one, they won't work right.
  '(erc-input-face ((t (:foreground "#888a85"))) t)
  '(erc-my-nick-face ((t (:foreground "#888a85" :weight bold))) t)
- '(slime-repl-inputed-output-face ((t (:foreground "#729fcf"))) t)) 
+ '(slime-repl-inputed-output-face ((t (:foreground "#729fcf"))) t))

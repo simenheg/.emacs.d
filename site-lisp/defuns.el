@@ -81,7 +81,7 @@ beginning of line."
   "Insert a neat, commented header."
   (interactive "MHeader: ")
   (comment-dwim nil)
-  (let ((offset (+ (length title) 4)))
+  (let ((offset (+ (length title) 5)))
     (while (< (+ (current-column) offset) fill-column)
       (insert "-")))
   (insert " [ " title " ]"))
@@ -106,6 +106,23 @@ beginning of line."
   (when message-reply-headers
     (insert (mail-header-from message-reply-headers) " writes:")
     (newline)))
+
+(defun move-line-down ()
+  (interactive)
+  (let ((col (current-column)))
+    (save-excursion
+      (forward-line)
+      (transpose-lines 1))
+    (forward-line)
+    (move-to-column col)))
+
+(defun move-line-up ()
+  (interactive)
+  (let ((col (current-column)))
+    (save-excursion
+      (forward-line)
+      (transpose-lines -1))
+    (move-to-column col)))
 
 (defadvice split-window-right (after balance-windows activate)
   "Workaround for unbalanced splits."

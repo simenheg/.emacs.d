@@ -7,7 +7,7 @@
  '(("gnu" . "http://elpa.gnu.org/packages/")
    ("marmalade" . "http://marmalade-repo.org/packages/")
    ("org" . "http://orgmode.org/elpa/")
-   ("MELPA" . "http://melpa.milkbox.net/packages/")))
+   ("MELPA" . "http://melpa.org/packages/")))
 
 (package-initialize)
 
@@ -16,11 +16,11 @@
   '(ace-jump-mode
     diminish
     elpy
+    exec-path-from-shell
     fuel
     geiser
     google-translate
     ido-vertical-mode
-    js-comint
     js2-mode
     js2-refactor
     json-mode
@@ -28,7 +28,6 @@
     lua-mode
     magit
     markdown-mode
-    maude-mode
     multiple-cursors
     org-plus-contrib
     paredit
@@ -45,6 +44,7 @@
     (package-install p)))
 
 (set-language-environment "UTF-8")
+(exec-path-from-shell-initialize)
 
 (setq-default
  indent-tabs-mode             nil  ; Use spaces for indentation
@@ -96,9 +96,9 @@
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-set-key (kbd "C-c a")   'org-agenda-list)
+(global-set-key (kbd "C-c d")   'duplicate)
 (global-set-key (kbd "C-c e")   'mc/edit-lines)
 (global-set-key (kbd "C-c l")   'mc/mark-all-like-this)
-(global-set-key (kbd "C-c m")   'rmail)
 (global-set-key (kbd "C-c n")   'mc/mark-next-like-this)
 (global-set-key (kbd "C-c p")   'list-packages)
 (global-set-key (kbd "C-c t")   'google-translate-at-point)
@@ -225,10 +225,6 @@
 (setq doc-view-continuous        t ; Smooth document viewing
       tex-dvi-view-command "xdvi") ; DVI-reader of choice
 
-;; ---------------------------------------------------------------- [ Eldoc ]
-;; Show function arglist or variable docstring in echo area
-(require 'eldoc)
-
 ;; ---------------------------------------------------------------- [ Emacs ]
 ;; Fix mouse wheel scrolling
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ; One line at a time
@@ -250,7 +246,7 @@
  'emacs-lisp-mode-hook
  (lambda ()
    (local-set-key (kbd "C-c C-b") 'eval-buffer)
-   (eldoc-mode)))
+   (turn-on-eldoc-mode)))
 
 (add-hook 'after-save-hook 'auto-byte-recompile)
 
@@ -280,16 +276,12 @@
 (ido-vertical-mode 1)
 
 ;; ----------------------------------------------------------- [ JavaScript ]
-(require 'js2-refactor)
-(require 'js-comint)
-
 (setq inferior-js-program-command "nodejs")
 
 (add-hook
  'js2-mode-hook
  (lambda ()
    (yas-minor-mode 1)
-   (electric-pair-mode 1)
    (subword-mode 1)
    (local-set-key (kbd "C-c C-b") 'js-send-buffer)))
 
@@ -298,12 +290,13 @@
 
 (setq js2-global-externs
       '("_" "$" "Mustache" "location" "setInterval" "clearInterval" "Ember"
-        "DS"))
+        "DS" "module" "require"))
 
-(setq nodejs-repl-command "nodejs")
+(setq js2-strict-trailing-comma-warning nil)
 
 ;; ----------------------------------------------------------------- [ Lisp ]
-(require 'paredit)
+(eval-after-load "paredit"
+  '(diminish 'paredit-mode))
 
 (autoload 'let-fix "autolet" "Automatic let-form fixer" t)
 
@@ -345,8 +338,6 @@
       '(love "^Error: Syntax error: \\(.*?\\):\\([0-9]+\\):.*$" 1 2) t))))
 
 ;; ----------------------------------------------------------------- [ Mail ]
-(require 'message)
-(require 'nnheader)
 (require 'private-stuff)
 
 (setq mail-from-style               'angles
@@ -366,6 +357,7 @@
 (add-hook
  'message-mode-hook
  (lambda ()
+   (defvar message-mode-map)
    (define-key
      message-mode-map [remap next-line] 'mail-abbrev-next-line)
    (define-key
@@ -418,28 +410,37 @@
 (add-hook
  'org-mode-hook
  (lambda ()
-   (defvar org-latex-pdf-process)
-   (require 'ox-latex)
-   (setq org-latex-pdf-process '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
-   (setq org-file-apps
-         '((auto-mode . emacs)
-           ("\\.mm\\'" . default)
-           ("\\.x?html?\\'" . default)
-           ("\\.pdf\\'" . "evince %s")))))
+   (require 'org-bibtex)
 
-;; Active org export backends
-(setq org-export-backends '(ascii html latex md))
+   (defvar org-latex-pdf-process
+     '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' \
+-pdf -f %f"))
 
-(require 'org-bibtex)
+   (defvar org-file-apps
+     '((auto-mode . emacs)
+       ("\\.mm\\'" . default)
+       ("\\.x?html?\\'" . default)
+       ("\\.pdf\\'" . "evince %s")))
+
+   ;; Active org export backends
+   (defvar org-export-backends '(ascii html latex md))))
 
 ;; ---------------------------------------------------------------- [ Python ]
-(elpy-enable)
-(elpy-use-ipython)
 (add-hook
- 'elpy-mode-hook
+ 'python-mode-hook
  (lambda ()
-   (highlight-indentation-mode 0)
-   (electric-pair-mode 1)))
+   (declare-function elpy-use-ipython "elpy")
+
+   (elpy-enable)
+   (elpy-use-ipython)
+
+   (add-hook
+    'elpy-mode-hook
+    (lambda ()
+      (highlight-indentation-mode 0)
+      (subword-mode 1)))
+
+   (elpy-mode 1)))
 
 ;; ------------------------------------------------------------------ [ RDF ]
 (autoload 'ttl-mode "ttl-mode" "Major mode for OWL or Turtle files" t)
@@ -475,13 +476,8 @@
  'web-mode-hook
  (lambda ()
    (rainbow-mode 1)
+   (subword-mode 1)
    (diminish 'rainbow-mode)))
-
-;; ------------------------------------------------------------- [ Diminish ]
-(mapc 'diminish '(abbrev-mode
-                  auto-fill-function
-                  eldoc-mode
-                  paredit-mode))
 
 ;;---------------------------------------------------------------- [ Custom ]
 (custom-set-faces
@@ -489,6 +485,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(erc-input-face ((t (:foreground "#888a85"))) t)
- '(erc-my-nick-face ((t (:foreground "#888a85" :weight bold))) t)
+ '(erc-input-face ((t (:foreground "#888a85"))))
+ '(erc-my-nick-face ((t (:foreground "#888a85" :weight bold))))
+ '(magit-blame-header ((t (:inherit magit-diff-file-header))))
  '(slime-repl-inputed-output-face ((t (:foreground "#729fcf"))) t))

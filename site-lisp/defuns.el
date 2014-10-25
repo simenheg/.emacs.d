@@ -48,6 +48,21 @@ beginning of line."
   (when (< 3 (line-number-at-pos))
     ad-do-it))
 
+(defun duplicate (arg)
+  "Duplicate the current line, or region if active."
+  (interactive "p")
+  (let ((beginning
+         (if (region-active-p) (region-beginning) (line-beginning-position)))
+        (end
+         (if (region-active-p) (region-end) (line-end-position)))
+        (point (point)))
+    (goto-char end)
+    (dotimes (_ arg)
+      (end-of-line)
+      (newline)
+      (insert (buffer-substring beginning end)))
+    (backward-char (- end point))))
+
 (defadvice eval-last-sexp (around replace-sexp (arg) activate)
   "Replace sexp when called with a prefix argument."
   (if arg
@@ -103,6 +118,8 @@ beginning of line."
 
 (defun message-insert-citation-line ()
   "Insert a simple citation line."
+  (defvar message-reply-headers)
+  (declare-function mail-header-from "nnheader")
   (when message-reply-headers
     (insert (mail-header-from message-reply-headers) " writes:")
     (newline)))

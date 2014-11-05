@@ -295,8 +295,7 @@
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
 
 (setq js2-global-externs
-      '("_" "$" "Mustache" "location" "setInterval" "clearInterval" "Ember"
-        "DS" "module" "require"))
+      '("location" "setInterval" "clearInterval" "module" "require"))
 
 (setq js2-strict-trailing-comma-warning nil)
 

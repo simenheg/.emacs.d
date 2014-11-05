@@ -24,7 +24,6 @@
     js2-mode
     js2-refactor
     json-mode
-    leuven-theme
     lua-mode
     magit
     markdown-mode
@@ -70,6 +69,7 @@
 (column-number-mode             1) ; Show column number
 (fset 'yes-or-no-p      'y-or-n-p) ; Make "yes/no" prompts "y/n"
 (global-auto-revert-mode        1) ; Reload files after modification
+(global-prettify-symbols-mode   1) ; Prettify symbols (e.g. lambda => λ)
 (menu-bar-mode                 -1) ; No menu bar
 (prefer-coding-system      'utf-8) ; Always prefer UTF-8
 (scroll-bar-mode               -1) ; No scroll bar
@@ -94,6 +94,7 @@
 (global-set-key (kbd "C-=")     'inc-next-number)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
+(global-set-key (kbd "C-j")     'newline)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-set-key (kbd "C-c a")   'org-agenda-list)
 (global-set-key (kbd "C-c d")   'duplicate)
@@ -252,7 +253,7 @@
  'emacs-lisp-mode-hook
  (lambda ()
    (local-set-key (kbd "C-c C-b") 'eval-buffer)
-   (turn-on-eldoc-mode)))
+   (eldoc-mode 1)))
 
 (add-hook 'after-save-hook 'auto-byte-recompile)
 
@@ -307,14 +308,7 @@
 
 (defun setup-lisp ()
   (auto-fill-mode 1)
-  (paredit-mode 1)
-
-  ;; Ultimate Lisp eye candy: display lambda as λ
-  (font-lock-add-keywords
-   nil `(("\\<lambda\\>"
-          (0 (progn (compose-region (match-beginning 0) (match-end 0)
-                                    ,(make-char 'greek-iso8859-7 107))
-                    nil))))))
+  (paredit-mode 1))
 
 (mapc
  (lambda (m) (add-hook m 'setup-lisp))
@@ -465,11 +459,6 @@
 
 ;; ------------------------------------------------------------ [ Text mode ]
 (add-hook 'text-mode-hook (lambda () (auto-fill-mode 1)))
-
-;; ------------------------------------------------------------- [ Uniquify ]
-;; Unique buffer names dependent on file name
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
 
 ;; ------------------------------------------------------------- [ Web mode ]
 (dolist (ext '("\\.html" "\\.hbs"))

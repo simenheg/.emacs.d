@@ -178,6 +178,12 @@
 (setq web-mode-css-indent-offset 4)
 
 (add-hook
+ 'scss-mode-hook
+ (lambda ()
+   (defvar scss-compile-at-save)
+   (setq scss-compile-at-save nil)))
+
+(add-hook
  'css-mode-hook
  (lambda ()
    (rainbow-mode 1)
@@ -467,7 +473,7 @@
 (setq uniquify-buffer-name-style 'forward)
 
 ;; ------------------------------------------------------------- [ Web mode ]
-(dolist (ext '("\\.html" "\\.hbs" "\\.scss"))
+(dolist (ext '("\\.html" "\\.hbs"))
   (add-to-list 'auto-mode-alist (cons ext 'web-mode)))
 
 (setq web-mode-engines-alist '(("ctemplate" . "\\.html")))

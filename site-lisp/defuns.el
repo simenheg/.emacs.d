@@ -106,7 +106,7 @@ beginning of line."
   (interactive
    (list (prefix-numeric-value current-prefix-arg) (use-region-p)))
   (if region
-      (kill-region (region-beginning) (region-end))
+      (kill-region (region-beginning) (region-end) t)
     (backward-kill-sexp arg)))
 
 (defun mail-add-contact (full-name alias email-address)

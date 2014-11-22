@@ -6,7 +6,6 @@
  package-archives
  '(("gnu" . "http://elpa.gnu.org/packages/")
    ("marmalade" . "http://marmalade-repo.org/packages/")
-   ("org" . "http://orgmode.org/elpa/")
    ("MELPA" . "http://melpa.org/packages/")))
 
 (package-initialize)
@@ -28,7 +27,6 @@
     magit
     markdown-mode
     multiple-cursors
-    org-plus-contrib
     paredit
     rainbow-mode
     rdf-prefix
@@ -404,25 +402,19 @@
  '((holiday-fixed 5 1 "International Workers' Day")
    (holiday-fixed 5 17 "Norwegian Constitution Day")))
 
-;; PDFs visited in Org-mode are opened in Evince (and other file extensions
-;; are handled according to the defaults)
+;; Active org export backends
+(setq org-export-backends '(ascii beamer html latex md))
+
 (add-hook
  'org-mode-hook
  (lambda ()
    (require 'org-bibtex)
-
+   ;; Use Evince for PDF previews
+   (defvar org-file-apps)
+   (add-to-list 'org-file-apps '("pdf" . "evince %s"))
    (defvar org-latex-pdf-process
      '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' \
--pdf -f %f"))
-
-   (defvar org-file-apps
-     '((auto-mode . emacs)
-       ("\\.mm\\'" . default)
-       ("\\.x?html?\\'" . default)
-       ("\\.pdf\\'" . "evince %s")))
-
-   ;; Active org export backends
-   (defvar org-export-backends '(ascii html latex md))))
+-pdf -f %f"))))
 
 ;; ---------------------------------------------------------------- [ Python ]
 (add-hook
@@ -464,7 +456,9 @@
 (dolist (ext '("\\.html" "\\.hbs"))
   (add-to-list 'auto-mode-alist (cons ext 'web-mode)))
 
-(setq web-mode-engines-alist '(("ctemplate" . "\\.html")))
+(setq
+ web-mode-engines-alist '(("ctemplate" . "\\.html"))
+ web-mode-markup-indent-offset 2)
 
 (add-hook
  'web-mode-hook

@@ -1,5 +1,5 @@
 ;; init.el --- Personal Emacs configurations
-;; Author: Simen Heggestøyl <simenheg@ifi.uio.no>
+;; Author: Simen Heggestøyl <simenheg@gmail.com>
 
 ;; Extra package repositories
 (setq
@@ -7,8 +7,6 @@
  '(("gnu" . "http://elpa.gnu.org/packages/")
    ("marmalade" . "http://marmalade-repo.org/packages/")
    ("MELPA" . "http://melpa.org/packages/")))
-
-(package-initialize)
 
 ;; Extra packages
 (defvar extra-packages
@@ -21,7 +19,6 @@
     google-translate
     ido-vertical-mode
     js2-mode
-    js2-refactor
     json-mode
     lua-mode
     magit
@@ -35,6 +32,11 @@
     ttl-mode
     web-mode))
 
+(package-initialize)
+
+(unless (file-exists-p package-user-dir)
+  (package-refresh-contents))
+
 ;; Install missing packages
 (dolist (p extra-packages)
   (unless (package-installed-p p)
@@ -45,7 +47,7 @@
 
 (setq-default
  indent-tabs-mode             nil  ; Use spaces for indentation
- major-mode            'text-mode  ; text-mode as the default for new buffers
+ major-mode             'org-mode  ; Org-mode as the default for new buffers
  fill-column                   79) ; Lines break at column 79
 
 (setq
@@ -92,14 +94,15 @@
 (global-set-key (kbd "C-=")     'inc-next-number)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
-(global-set-key (kbd "C-j")     'newline)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-set-key (kbd "C-c a")   'org-agenda-list)
 (global-set-key (kbd "C-c d")   'duplicate)
 (global-set-key (kbd "C-c e")   'mc/edit-lines)
+(global-set-key (kbd "C-c f")   'find-grep)
 (global-set-key (kbd "C-c l")   'mc/mark-all-like-this)
 (global-set-key (kbd "C-c n")   'mc/mark-next-like-this)
 (global-set-key (kbd "C-c p")   'list-packages)
+(global-set-key (kbd "C-c r")   'rename-buffer)
 (global-set-key (kbd "C-c t")   'google-translate-at-point)
 (global-set-key (kbd "C-c v")   'magit-status)
 (global-set-key (kbd "C-c w")   'compare-windows)
@@ -174,13 +177,9 @@
 (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
 
 ;; ------------------------------------------------------------------ [ CSS ]
-(setq web-mode-css-indent-offset 4)
+(require 'css-mode-25.1)
 
-(add-hook
- 'scss-mode-hook
- (lambda ()
-   (defvar scss-compile-at-save)
-   (setq scss-compile-at-save nil)))
+(add-to-list 'auto-mode-alist '("\\.scss$" . scss-mode))
 
 (add-hook
  'css-mode-hook
@@ -227,8 +226,7 @@
 ;; Auto-update document files
 (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 
-(setq doc-view-continuous        t ; Smooth document viewing
-      tex-dvi-view-command "xdvi") ; DVI-reader of choice
+(setq doc-view-continuous t) ; Smooth document viewing
 
 ;; ---------------------------------------------------------------- [ Emacs ]
 ;; Fix mouse wheel scrolling
@@ -273,9 +271,6 @@
 (setq google-translate-default-source-language "no"
       google-translate-default-target-language "en")
 
-;; -------------------------------------------------------------- [ Haskell ]
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-
 ;; ------------------------------------------------------------- [ Ido mode ]
 (ido-mode 'buffers)
 (ido-vertical-mode 1)
@@ -292,9 +287,6 @@
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
-
-(setq js2-global-externs
-      '("location" "setInterval" "clearInterval" "module" "require"))
 
 (setq js2-strict-trailing-comma-warning nil)
 
@@ -457,7 +449,7 @@
   (add-to-list 'auto-mode-alist (cons ext 'web-mode)))
 
 (setq
- web-mode-engines-alist '(("ctemplate" . "\\.html"))
+ web-mode-engines-alist '(("django" . "\\.html"))
  web-mode-markup-indent-offset 2)
 
 (add-hook

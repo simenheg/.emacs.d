@@ -27,6 +27,7 @@
     paredit
     rainbow-mode
     rdf-prefix
+    restclient
     smex
     sparql-mode
     ttl-mode
@@ -95,7 +96,8 @@
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
-(global-set-key (kbd "C-c a")   'org-agenda-list)
+(global-set-key (kbd "C-c a")   'org-agenda)
+(global-set-key (kbd "C-c c")   'org-capture)
 (global-set-key (kbd "C-c d")   'duplicate)
 (global-set-key (kbd "C-c e")   'mc/edit-lines)
 (global-set-key (kbd "C-c f")   'find-grep)
@@ -239,6 +241,9 @@
 ;; Set current buffer as the window name
 (setq-default frame-title-format (list "%b %f"))
 
+;; Electric pairs
+(electric-pair-mode 1)
+
 ;; Put #autosave# and backup~ files into own directory
 (let ((autosave-directory (conf "autosaves/")))
   (setq backup-directory-alist         `((".*" . ,autosave-directory))
@@ -315,7 +320,7 @@
 ;; ------------------------------------------------------------------- [ Lua ]
 ;; Basic LӦVE compilation support
 (add-hook
- 'lua-modee-hook
+ 'lua-mode-hook
  (lambda ()
    (global-set-key "\C-c\C-c" 'compile)
    (when (file-exists-p "main.lua")
@@ -370,14 +375,10 @@
 ;; --------------------------------------------------------------- [ Octave ]
 (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
 
-;; ------------------------------------------------------------------ [ OWL ]
-(autoload 'omn-mode "omn-mode" nil t)
-(add-to-list 'auto-mode-alist '("\\.owl$" . omn-mode))
-
 ;; ------------------------------------------------------------------ [ Org ]
 ;; Org agenda
 (setq
- org-agenda-files '("~/life.org")
+ org-agenda-files (conf "org-agenda-files")
  org-agenda-start-on-weekday nil
  org-agenda-include-diary t)
 
@@ -394,8 +395,13 @@
  '((holiday-fixed 5 1 "International Workers' Day")
    (holiday-fixed 5 17 "Norwegian Constitution Day")))
 
-;; Active org export backends
-(setq org-export-backends '(ascii beamer html latex md))
+;; Capture templates
+(setq
+ org-capture-templates
+ '(("a" "Agenda" entry (file+headline "~/life.org" "Agenda")
+    "** %?" :prepend t)
+   ("b" "Bug" entry (file+headline "~/bugs/bugs.org" "Bugs")
+    "** TODO %?")))
 
 (add-hook
  'org-mode-hook
@@ -450,6 +456,7 @@
 
 (setq
  web-mode-engines-alist '(("django" . "\\.html"))
+ web-mode-enable-auto-pairing nil
  web-mode-markup-indent-offset 2)
 
 (add-hook

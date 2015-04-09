@@ -1,14 +1,12 @@
 ;; init.el --- Personal Emacs configurations
 ;; Author: Simen Heggestøyl <simenheg@gmail.com>
 
-;; Extra package repositories
 (setq
  package-archives
- '(("gnu" . "http://elpa.gnu.org/packages/")
+ '(("GNU" . "http://elpa.gnu.org/packages/")
    ("marmalade" . "http://marmalade-repo.org/packages/")
    ("MELPA" . "http://melpa.org/packages/")))
 
-;; Extra packages
 (defvar extra-packages
   '(ace-jump-mode
     diminish
@@ -20,11 +18,13 @@
     ido-vertical-mode
     js2-mode
     json-mode
+    know-your-http-well
     lua-mode
     magit
     markdown-mode
     multiple-cursors
     paredit
+    projectile
     rainbow-mode
     rdf-prefix
     restclient
@@ -48,17 +48,16 @@
 
 (setq-default
  indent-tabs-mode             nil  ; Use spaces for indentation
- major-mode             'org-mode  ; Org-mode as the default for new buffers
- fill-column                   79) ; Lines break at column 79
+ major-mode             'org-mode) ; Org-mode as default mode
 
 (setq
  auto-revert-verbose          nil  ; Be quiet about reverts
- comint-input-ignoredups        t  ; Ignore duplicates in Comint history
+ comint-input-ignoredups        t  ; Ignore duplicate history
  compare-ignore-whitespace      t  ; Ignore whitespace differences
- default-input-method       "TeX"  ; TeX is the default toggled input method
+ default-input-method       "TeX"  ; TeX as default input method
  disabled-command-function    nil  ; Enable disabled commands
  display-time-24hr-format       t  ; 24 hour time format
- eshell-hist-ignoredups         t  ; Ignore duplicates in Eshell history
+ eshell-hist-ignoredups         t  ; Ignore duplicate history
  history-delete-duplicates      t  ; Delete duplicate history entries
  inhibit-startup-screen         t  ; No startup screen
  initial-scratch-message      nil  ; No scratch message
@@ -70,7 +69,7 @@
 (column-number-mode             1) ; Show column number
 (fset 'yes-or-no-p      'y-or-n-p) ; Make "yes/no" prompts "y/n"
 (global-auto-revert-mode        1) ; Reload files after modification
-(global-prettify-symbols-mode   1) ; Prettify symbols (e.g. lambda => λ)
+(global-prettify-symbols-mode   1) ; Pretty symbols (e.g. lambda => λ)
 (menu-bar-mode                 -1) ; No menu bar
 (prefer-coding-system      'utf-8) ; Always prefer UTF-8
 (scroll-bar-mode               -1) ; No scroll bar
@@ -89,9 +88,8 @@
 ;; Miscellaneous utility functions
 (require 'defuns)
 
-;; Global keybinds
 (global-set-key (kbd "C-'")     'org-cycle-agenda-files)
-(global-set-key (kbd "C-+")     (lambda () (interactive) (inc-next-number -1)))
+(global-set-key (kbd "C-+")     'dec-next-number)
 (global-set-key (kbd "C-=")     'inc-next-number)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
@@ -103,7 +101,7 @@
 (global-set-key (kbd "C-c f")   'find-grep)
 (global-set-key (kbd "C-c l")   'mc/mark-all-like-this)
 (global-set-key (kbd "C-c n")   'mc/mark-next-like-this)
-(global-set-key (kbd "C-c p")   'list-packages)
+(global-set-key (kbd "C-c C-p") 'list-packages)
 (global-set-key (kbd "C-c r")   'rename-buffer)
 (global-set-key (kbd "C-c t")   'google-translate-at-point)
 (global-set-key (kbd "C-c v")   'magit-status)
@@ -116,15 +114,15 @@
 (global-set-key [C-M-backspace] 'backward-kill-sexp)
 (global-set-key [M-down]        'move-line-down)
 (global-set-key [M-up]          'move-line-up)
-(global-set-key [f5]            (lambda () (interactive) (revert-buffer nil t)))
+(global-set-key [f5]            'revert-buffer-noconfirm)
 
-;; ------------------------------------------------------------ [ Assembler ]
+;; ----------------------------------------------------- [ Assembler ]
 (setq asm-comment-char ?#) ; '#' as comment char (default is ';')
 
-;; --------------------------------------------------------------- [ BibTeX ]
+;; -------------------------------------------------------- [ BibTeX ]
 (setq-default bibtex-dialect 'biblatex)
 
-;; -------------------------------------------------------------------- [ C ]
+;; ------------------------------------------------------------- [ C ]
 (add-hook
  'c-mode-common-hook
  (lambda ()
@@ -133,22 +131,24 @@
    (local-set-key (kbd "C-c i") 'c-include-header)
    (local-set-key (kbd "C-c h") 'c-find-corresponding-file)
 
-   ;; Try to create a sensible compilation string when no Makefile is found
+   ;; Try to create a sensible compilation string when no Makefile is
+   ;; found
    (unless (file-exists-p "Makefile")
-     (set (make-local-variable 'compile-command)
-          (let ((file (file-name-nondirectory buffer-file-name)))
-            (format "%s %s %s -o %s"
-                    (or (getenv "CC") "gcc")
-                    file
-                    (or (getenv "CFLAGS") "-std=c99 -Wall")
-                    (file-name-sans-extension file)))))
+     (setq-local
+      compile-command
+      (let ((file (file-name-nondirectory buffer-file-name)))
+        (format "%s %s %s -o %s"
+                (or (getenv "CC") "gcc")
+                file
+                (or (getenv "CFLAGS") "-std=c99 -Wall")
+                (file-name-sans-extension file)))))
 
-   ;; Try to create a sensible compilation string when a Makefile is found
-   ;; in the parent directory
+   ;; Try to create a sensible compilation string when a Makefile is
+   ;; found in the parent directory
    (when (file-exists-p "../Makefile")
-     (set (make-local-variable 'compile-command) "make devel -C .."))))
+     (setq-local compile-command "make devel -C .."))))
 
-;; ------------------------------------------------------------- [ Calendar ]
+;; ------------------------------------------------------ [ Calendar ]
 (setq calendar-location-name  "Oslo, Norway"
       calendar-latitude       60.0
       calendar-longitude      10.7
@@ -159,10 +159,10 @@
       '(24-hours "." minutes
                  (if time-zone " (") time-zone (if time-zone ")")))
 
-;; ---------------------------------------------------------- [ Color-theme ]
+;; --------------------------------------------------- [ Color-theme ]
 (load-theme 'leuven t)
 
-;; ---------------------------------------------------------- [ Common Lisp ]
+;; --------------------------------------------------- [ Common Lisp ]
 (setq inferior-lisp-program "sbcl")
 
 ;; More sensible `loop' indentation
@@ -170,15 +170,16 @@
       lisp-simple-loop-indentation  2
       lisp-loop-keyword-indentation 6)
 
-;; Stop SLIME's REPL from grabbing DEL, which is annoying when backspacing
-;; over a ')'
-(defun override-slime-repl-bindings-with-paredit ()
-  (defvar slime-repl-mode-map)
-  (define-key slime-repl-mode-map
-    (read-kbd-macro paredit-backward-delete-key) nil))
-(add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
+;; Stop SLIME's REPL from grabbing DEL, which is annoying when
+;; backspacing over a ')'
+(add-hook
+ 'slime-repl-mode-hook
+ (lambda ()
+   (defvar slime-repl-mode-map)
+   (define-key slime-repl-mode-map
+     (read-kbd-macro paredit-backward-delete-key) nil)))
 
-;; ------------------------------------------------------------------ [ CSS ]
+;; -------------------------------------------------------- [ (S)CSS ]
 (require 'css-mode-25.1)
 
 (add-to-list 'auto-mode-alist '("\\.scss$" . scss-mode))
@@ -189,7 +190,7 @@
    (rainbow-mode 1)
    (diminish 'rainbow-mode)))
 
-;; ---------------------------------------------------------------- [ Dired ]
+;; --------------------------------------------------------- [ Dired ]
 (add-hook
  'dired-load-hook
  (lambda ()
@@ -218,22 +219,22 @@
 (setq-default dired-listing-switches "-alh --time-style=+")
 
 (setq
- dired-dwim-target t                   ; Let Dired guess target directory
- dired-omit-verbose nil                ; Omit files, but be quiet about it
+ dired-dwim-target t                   ; Let Dired guess target
+ dired-omit-verbose nil                ; Be quiet about omitted files
  dired-recursive-copies 'always        ; Don't ask, just copy
  global-auto-revert-non-file-buffers t ; Auto-refresh the file list
  image-dired-show-all-from-dir-max-files 500)
 
-;; -------------------------------------------------------------- [ DocView ]
+;; ------------------------------------------------------- [ DocView ]
 ;; Auto-update document files
 (add-hook 'doc-view-mode-hook 'auto-revert-mode)
 
 (setq doc-view-continuous t) ; Smooth document viewing
 
-;; ---------------------------------------------------------------- [ Emacs ]
+;; --------------------------------------------------------- [ Emacs ]
 ;; Fix mouse wheel scrolling
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ; One line at a time
-(setq mouse-wheel-progressive-speed nil) ; Don't accelerate scrolling
+(setq mouse-wheel-scroll-amount '(2 ((shift) . 1)))
+(setq mouse-wheel-progressive-speed nil)
 
 ;; Don't bother to ask unless the file *really* is large (100 MB+)
 (setq large-file-warning-threshold 100000000)
@@ -246,10 +247,11 @@
 
 ;; Put #autosave# and backup~ files into own directory
 (let ((autosave-directory (conf "autosaves/")))
-  (setq backup-directory-alist         `((".*" . ,autosave-directory))
-        auto-save-file-name-transforms `((".*"   ,autosave-directory t))))
+  (setq backup-directory-alist `((".*" . ,autosave-directory)))
+  (setq auto-save-file-name-transforms
+        `((".*" ,autosave-directory t))))
 
-;; ----------------------------------------------------------- [ Emacs Lisp ]
+;; ---------------------------------------------------- [ Emacs Lisp ]
 (add-hook
  'emacs-lisp-mode-hook
  (lambda ()
@@ -258,44 +260,45 @@
 
 (add-hook 'after-save-hook 'auto-byte-recompile)
 
-;; ------------------------------------------------------------------ [ ERC ]
+;; ----------------------------------------------------------- [ ERC ]
 (setq erc-fill-column fill-column)
 
-;; --------------------------------------------------------------- [ Factor ]
+;; -------------------------------------------------------- [ Factor ]
 (setq fuel-factor-root-dir "~/src/factor")
-(add-hook 'factor-mode-hook (lambda () (set-fill-column 64)))
+(add-hook 'factor-mode-hook (lambda () (setq-local fill-column 64)))
 
-;; -------------------------------------------------------------- [ Flymake ]
+;; ------------------------------------------------------- [ Flymake ]
 (setq help-at-pt-display-when-idle t ; Activate echoed help messages
       help-at-pt-set-timer        0) ; Echo help instantly
 
-;; ----------------------------------------------------- [ Google Translate ]
+;; ---------------------------------------------- [ Google Translate ]
 (autoload 'google-translate-at-point "google-translate" nil t)
 (autoload 'google-query-translate "google-translate" nil t)
 
 (setq google-translate-default-source-language "no"
       google-translate-default-target-language "en")
 
-;; ------------------------------------------------------------- [ Ido mode ]
+;; ------------------------------------------------------ [ Ido mode ]
 (ido-mode 'buffers)
 (ido-vertical-mode 1)
 
-;; ----------------------------------------------------------- [ JavaScript ]
+;; ---------------------------------------------------- [ JavaScript ]
 (setq inferior-js-program-command "nodejs")
 
 (add-hook
  'js2-mode-hook
  (lambda ()
+   (setq-local fill-column 79)
+   (local-set-key (kbd "RET") 'js2-line-break)
    (yas-minor-mode 1)
-   (subword-mode 1)
-   (local-set-key (kbd "C-c C-b") 'js-send-buffer)))
+   (subword-mode 1)))
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
 
 (setq js2-strict-trailing-comma-warning nil)
 
-;; ----------------------------------------------------------------- [ Lisp ]
+;; ---------------------------------------------------------- [ Lisp ]
 (eval-after-load "paredit"
   '(diminish 'paredit-mode))
 
@@ -317,21 +320,22 @@
    scheme-mode-hook
    slime-repl-mode-hook))
 
-;; ------------------------------------------------------------------- [ Lua ]
+;; ----------------------------------------------------------- [ Lua ]
 ;; Basic LӦVE compilation support
 (add-hook
  'lua-mode-hook
  (lambda ()
    (global-set-key "\C-c\C-c" 'compile)
    (when (file-exists-p "main.lua")
-     (set (make-local-variable 'compile-command) "love . ")
+     (setq-local compile-command "love . ")
      (add-to-list
       'compilation-error-regexp-alist 'love t)
      (add-to-list
       'compilation-error-regexp-alist-alist
-      '(love "^Error: Syntax error: \\(.*?\\):\\([0-9]+\\):.*$" 1 2) t))))
+      '(love
+        "^Error: Syntax error: \\(.*?\\):\\([0-9]+\\):.*$" 1 2) t))))
 
-;; ----------------------------------------------------------------- [ Mail ]
+;; ---------------------------------------------------------- [ Mail ]
 (require 'private-stuff)
 
 (setq mail-from-style               'angles
@@ -344,25 +348,25 @@
       send-mail-function            'smtpmail-send-it
       smtpmail-smtp-server          "smtp.uio.no"
       smtpmail-smtp-service         587
-      gnutls-min-prime-bits         nil
-      message-default-headers       "FCC: ~/mail/sent")
+      gnutls-min-prime-bits         nil)
 
 ;; Expand mail-aliases on `next-line' and `end-of-buffer'
 (add-hook
  'message-mode-hook
  (lambda ()
    (defvar message-mode-map)
-   (define-key
-     message-mode-map [remap next-line] 'mail-abbrev-next-line)
-   (define-key
-     message-mode-map [remap end-of-buffer] 'mail-abbrev-end-of-buffer)))
+   (define-key message-mode-map [remap next-line]
+     'mail-abbrev-next-line)
+   (define-key message-mode-map [remap end-of-buffer]
+     'mail-abbrev-end-of-buffer)))
 
 (setq rmail-mime-attachment-dirs-alist '((".*" "~/tmp" "~" "/tmp")))
 
+;; Additional ignored headers
 (setq rmail-ignored-headers
       (apply
        'concat rmail-ignored-headers
-       (mapcar (lambda (s) (concat "\\|^" s ":")) ; Additional ignored headers
+       (mapcar (lambda (s) (concat "\\|^" s ":"))
                '("accept-language"
                  "authentication-results"
                  "content-disposition"
@@ -372,10 +376,10 @@
                  "received-spf"
                  "thread-index"))))
 
-;; --------------------------------------------------------------- [ Octave ]
+;; -------------------------------------------------------- [ Octave ]
 (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
 
-;; ------------------------------------------------------------------ [ Org ]
+;; ----------------------------------------------------------- [ Org ]
 ;; Org agenda
 (setq
  org-agenda-files (conf "org-agenda-files")
@@ -388,12 +392,6 @@
  holiday-hebrew-holidays nil
  holiday-islamic-holidays nil
  holiday-oriental-holidays nil)
-
-;; Add some relevant holidays
-(setq
- holiday-other-holidays
- '((holiday-fixed 5 1 "International Workers' Day")
-   (holiday-fixed 5 17 "Norwegian Constitution Day")))
 
 ;; Capture templates
 (setq
@@ -411,13 +409,19 @@
    (defvar org-file-apps)
    (add-to-list 'org-file-apps '("pdf" . "evince %s"))
    (defvar org-latex-pdf-process
-     '("latexmk -pdflatex='pdflatex -shell-escape -interaction nonstopmode' \
--pdf -f %f"))))
+     '("latexmk -pdflatex='pdflatex -shell-escape -interaction \
+nonstopmode' -pdf -f %f"))))
 
-;; ---------------------------------------------------------------- [ Python ]
+;; ---------------------------------------------------- [ Projectile ]
+(projectile-global-mode)
+(setq projectile-mode-line
+      '(:eval (format " P[%s]" (projectile-project-name))))
+
+;; -------------------------------------------------------- [ Python ]
 (add-hook
  'python-mode-hook
  (lambda ()
+   (setq-local fill-column 79)
    (declare-function elpy-use-ipython "elpy")
 
    (elpy-enable)
@@ -431,7 +435,7 @@
 
    (elpy-mode 1)))
 
-;; ------------------------------------------------------------------ [ RDF ]
+;; ----------------------------------------------------------- [ RDF ]
 (autoload 'ttl-mode "ttl-mode" "Major mode for OWL or Turtle files" t)
 
 (dolist (ext '("\\.n3" "\\.ttl"))
@@ -439,18 +443,18 @@
 
 (setq ttl-electric-semi-mode nil)
 
-;; --------------------------------------------------------------- [ Scheme ]
+;; -------------------------------------------------------- [ Scheme ]
 (setq geiser-active-implementations '(guile)
       geiser-repl-query-on-kill-p nil)
 
-;; --------------------------------------------------------------- [ SPARQL ]
+;; -------------------------------------------------------- [ SPARQL ]
 (dolist (ext '("\\.sparql" "\\.rq"))
   (add-to-list 'auto-mode-alist (cons ext 'sparql-mode)))
 
-;; ------------------------------------------------------------ [ Text mode ]
+;; ----------------------------------------------------- [ Text mode ]
 (add-hook 'text-mode-hook (lambda () (auto-fill-mode 1)))
 
-;; ------------------------------------------------------------- [ Web mode ]
+;; ------------------------------------------------------ [ Web mode ]
 (dolist (ext '("\\.html" "\\.hbs"))
   (add-to-list 'auto-mode-alist (cons ext 'web-mode)))
 
@@ -466,7 +470,7 @@
    (subword-mode 1)
    (diminish 'rainbow-mode)))
 
-;;---------------------------------------------------------------- [ Custom ]
+;;--------------------------------------------------------- [ Custom ]
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

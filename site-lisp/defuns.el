@@ -26,6 +26,11 @@ beginning of line."
     (goto-char (point-min))
     (insert "#include <" header ".h>\n")))
 
+(defun dec-next-number (&optional arg)
+  "Decrease first number found after point (ala Vim's C-x)."
+  (interactive "p")
+  (inc-next-number (* (or arg 1) -1)))
+
 (defun dired-beginning-of-buffer ()
   "Jump to the first file listed in Dired."
   (interactive)
@@ -140,6 +145,11 @@ beginning of line."
       (forward-line)
       (transpose-lines -1))
     (move-to-column col)))
+
+(defun revert-buffer-noconfirm ()
+  "Like `revert-buffer', but don't ask for confirmation."
+  (interactive)
+  (revert-buffer nil t))
 
 (defadvice split-window-right (after balance-windows activate)
   "Workaround for unbalanced splits."

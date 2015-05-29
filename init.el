@@ -116,9 +116,6 @@
 (global-set-key [M-up]          'move-line-up)
 (global-set-key [f5]            'revert-buffer-noconfirm)
 
-;; ----------------------------------------------------- [ Assembler ]
-(setq asm-comment-char ?#) ; '#' as comment char (default is ';')
-
 ;; -------------------------------------------------------- [ BibTeX ]
 (setq-default bibtex-dialect 'biblatex)
 
@@ -232,6 +229,9 @@
 (setq doc-view-continuous t) ; Smooth document viewing
 
 ;; --------------------------------------------------------- [ Emacs ]
+;; Set EDITOR environment variable
+(setenv "EDITOR" "emacs -Q")
+
 ;; Fix mouse wheel scrolling
 (setq mouse-wheel-scroll-amount '(2 ((shift) . 1)))
 (setq mouse-wheel-progressive-speed nil)
@@ -251,12 +251,17 @@
   (setq auto-save-file-name-transforms
         `((".*" ,autosave-directory t))))
 
+;; Clean up trailing whitespace before saving
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 ;; ---------------------------------------------------- [ Emacs Lisp ]
 (add-hook
  'emacs-lisp-mode-hook
  (lambda ()
    (local-set-key (kbd "C-c C-b") 'eval-buffer)
    (eldoc-mode 1)))
+
+(add-hook 'ielm-mode-hook (lambda () (eldoc-mode 1)))
 
 (add-hook 'after-save-hook 'auto-byte-recompile)
 
@@ -334,6 +339,11 @@
       'compilation-error-regexp-alist-alist
       '(love
         "^Error: Syntax error: \\(.*?\\):\\([0-9]+\\):.*$" 1 2) t))))
+
+;; --------------------------------------------------------- [ Magit ]
+(setq magit-last-seen-setup-instructions "1.4.0")
+
+(add-hook 'git-commit-mode-hook (lambda () (flyspell-mode 1)))
 
 ;; ---------------------------------------------------------- [ Mail ]
 (require 'private-stuff)
@@ -466,6 +476,13 @@ nonstopmode' -pdf -f %f"))))
 (add-hook
  'web-mode-hook
  (lambda ()
+   (defvar web-mode-django-control-blocks)
+   (defvar web-mode-django-control-blocks-regexp)
+   (push "editable" web-mode-django-control-blocks)
+   (push "endeditable" web-mode-django-control-blocks)
+   (setq web-mode-django-control-blocks-regexp
+         (regexp-opt web-mode-django-control-blocks t))
+
    (rainbow-mode 1)
    (subword-mode 1)
    (diminish 'rainbow-mode)))

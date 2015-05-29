@@ -1,15 +1,16 @@
 ;;; defuns.el --- Miscellaneous utility functions
 
 (defun auto-byte-recompile ()
-  "If the current buffer is in emacs-lisp-mode and there already exists an
-.elc file corresponding to the current buffer file, then recompile the file."
+  "If the current buffer is in emacs-lisp-mode and there already
+exists an .elc file corresponding to the current buffer file,
+then recompile the file."
   (when (and (eq major-mode 'emacs-lisp-mode)
              (file-exists-p (concat (buffer-file-name) "c")))
     (byte-compile-file buffer-file-name)))
 
 (defun beginning-of-indentation-or-line ()
-  "Sets point back to indentation level. If already there, sets point to
-beginning of line."
+  "Sets point back to indentation level. If already there, sets
+point to beginning of line."
   (interactive)
   (let ((prev (point)))
     (back-to-indentation)
@@ -48,7 +49,8 @@ beginning of line."
   (when (= (point-max) (point))
     (dired-previous-line arg)))
 
-(defadvice dired-previous-line (around dired-previous-line (arg) activate)
+(defadvice dired-previous-line (around dired-previous-line (arg)
+                                       activate)
   "Don't move before the first in Dired."
   (when (< 3 (line-number-at-pos))
     ad-do-it))
@@ -57,9 +59,13 @@ beginning of line."
   "Duplicate the current line, or region if active."
   (interactive "p")
   (let ((beginning
-         (if (region-active-p) (region-beginning) (line-beginning-position)))
+         (if (region-active-p)
+             (region-beginning)
+           (line-beginning-position)))
         (end
-         (if (region-active-p) (region-end) (line-end-position)))
+         (if (region-active-p)
+             (region-end)
+           (line-end-position)))
         (point (point)))
     (goto-char end)
     (dotimes (_ arg)
@@ -88,6 +94,16 @@ beginning of line."
     (replace-regexp-in-string " " ": ~a, " symbols)
     symbols)))
 
+(defun grunt ()
+  "Run Grunt in an Eshell buffer, creating it if necessary."
+  (interactive)
+  (let ((eshell-buffer-name "*grunt*"))
+    (eshell)
+    (unless (comint-check-proc (current-buffer))
+      (eshell-return-to-prompt)
+      (insert "grunt")
+      (eshell-send-input))))
+
 (defun inc-next-number (&optional arg)
   "Increment first number found after point (ala Vim's C-a)."
   (interactive "p")
@@ -107,7 +123,8 @@ beginning of line."
   (insert " [ " title " ]"))
 
 (defun kill-region-or-backward-kill-sexp (&optional arg region)
-  "`kill-region' if the region is active, otherwise `backward-kill-sexp'"
+  "`kill-region' if the region is active, otherwise
+`backward-kill-sexp'"
   (interactive
    (list (prefix-numeric-value current-prefix-arg) (use-region-p)))
   (if region
@@ -130,20 +147,22 @@ beginning of line."
     (newline)))
 
 (defun move-line-down ()
+  "Transpose line at point with the line below.
+Point stays at the same position in the original line."
   (interactive)
   (let ((col (current-column)))
-    (save-excursion
-      (forward-line)
-      (transpose-lines 1))
     (forward-line)
+    (transpose-lines 1)
+    (forward-line -1)
     (move-to-column col)))
 
 (defun move-line-up ()
+  "Transpose line at point with the line above.
+Point stays at the same position in the original line."
   (interactive)
   (let ((col (current-column)))
-    (save-excursion
-      (forward-line)
-      (transpose-lines -1))
+    (transpose-lines 1)
+    (forward-line -2)
     (move-to-column col)))
 
 (defun revert-buffer-noconfirm ()
@@ -156,10 +175,13 @@ beginning of line."
   (balance-windows))
 
 (defun tidy-buffer ()
-  "Ident, untabify and unwhitespacify current buffer, or region if active."
+  "Ident, untabify and unwhitespacify current buffer, or region
+if active."
   (interactive)
-  (let ((beginning (if (region-active-p) (region-beginning) (point-min)))
-        (end (if (region-active-p) (region-end) (point-max))))
+  (let ((beginning
+         (if (region-active-p) (region-beginning) (point-min)))
+        (end
+         (if (region-active-p) (region-end) (point-max))))
     (indent-region beginning end)
     (whitespace-cleanup)
     (untabify beginning (if (< end (point-max)) end (point-max)))))

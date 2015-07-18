@@ -9,12 +9,12 @@
 
 (defvar extra-packages
   '(ace-jump-mode
-    diminish
     elpy
     exec-path-from-shell
     fuel
     geiser
     google-translate
+    helm
     ido-vertical-mode
     js2-mode
     json-mode
@@ -29,8 +29,6 @@
     rdf-prefix
     restclient
     smex
-    sparql-mode
-    ttl-mode
     web-mode))
 
 (package-initialize)
@@ -63,6 +61,7 @@
  initial-scratch-message      nil  ; No scratch message
  kill-read-only-ok              t  ; Killing read-only text is OK
  password-cache-expiry        nil  ; Cache TRAMP passwords forever
+ sentence-end-double-space    nil  ; Fill with single spaces
  show-paren-delay               0) ; Don't delay the paren update
 
 (blink-cursor-mode              0) ; No blinking cursor
@@ -70,6 +69,7 @@
 (fset 'yes-or-no-p      'y-or-n-p) ; Make "yes/no" prompts "y/n"
 (global-auto-revert-mode        1) ; Reload files after modification
 (global-prettify-symbols-mode   1) ; Pretty symbols (e.g. lambda => λ)
+(ido-vertical-mode              1) ; Display ido-mode vertically
 (menu-bar-mode                 -1) ; No menu bar
 (prefer-coding-system      'utf-8) ; Always prefer UTF-8
 (scroll-bar-mode               -1) ; No scroll bar
@@ -92,6 +92,7 @@
 (global-set-key (kbd "C-+")     'dec-next-number)
 (global-set-key (kbd "C-=")     'inc-next-number)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
+(global-set-key (kbd "C-c C-p") 'list-packages)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-set-key (kbd "C-c a")   'org-agenda)
@@ -101,13 +102,14 @@
 (global-set-key (kbd "C-c f")   'find-grep)
 (global-set-key (kbd "C-c l")   'mc/mark-all-like-this)
 (global-set-key (kbd "C-c n")   'mc/mark-next-like-this)
-(global-set-key (kbd "C-c C-p") 'list-packages)
 (global-set-key (kbd "C-c r")   'rename-buffer)
 (global-set-key (kbd "C-c t")   'google-translate-at-point)
 (global-set-key (kbd "C-c v")   'magit-status)
 (global-set-key (kbd "C-c w")   'compare-windows)
+(global-set-key (kbd "C-j")     'newline)
 (global-set-key (kbd "C-w")     'kill-region-or-backward-kill-sexp)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "C-x b")   'helm-buffers-list)
 (global-set-key (kbd "C-x k")   'kill-this-buffer)
 (global-set-key (kbd "C-z")     'bury-buffer)
 (global-set-key (kbd "M-x")     'smex)
@@ -156,6 +158,25 @@
       '(24-hours "." minutes
                  (if time-zone " (") time-zone (if time-zone ")")))
 
+;; ----------------------------------------------- [ Clean Mode Line ]
+(defvar clean-mode-line-alist
+  '((auto-fill-function . "")
+    (dired-omit-mode . "")
+    (eldoc-mode . "")
+    (elpy-mode . "")
+    (emacs-lisp-mode . "Elisp")
+    (js2-mode "js2")
+    (magit-auto-revert-mode . "")
+    (paredit-mode . "")
+    (python-mode . "Py")
+    (rainbow-mode . "")
+    (subword-mode . "")
+    (yas-minor-mode . "")))
+
+(add-hook
+ 'after-change-major-mode-hook
+ (lambda () (clean-mode-line clean-mode-line-alist)))
+
 ;; --------------------------------------------------- [ Color-theme ]
 (load-theme 'leuven t)
 
@@ -181,11 +202,7 @@
 
 (add-to-list 'auto-mode-alist '("\\.scss$" . scss-mode))
 
-(add-hook
- 'css-mode-hook
- (lambda ()
-   (rainbow-mode 1)
-   (diminish 'rainbow-mode)))
+(add-hook 'css-mode-hook (lambda () (rainbow-mode 1)))
 
 ;; --------------------------------------------------------- [ Dired ]
 (add-hook
@@ -209,8 +226,7 @@
  (lambda ()
    (declare-function dired-omit-mode "dired-x")
    ;; Omit "uninteresting" files
-   (dired-omit-mode 1)
-   (diminish 'dired-omit-mode)))
+   (dired-omit-mode 1)))
 
 ;; Make file sizes human-readable, and hide time stamps
 (setq-default dired-listing-switches "-alh --time-style=+")
@@ -251,8 +267,14 @@
   (setq auto-save-file-name-transforms
         `((".*" ,autosave-directory t))))
 
-;; Clean up trailing whitespace before saving
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;; Clean up trailing whitespace before saving, except at the current
+;; line
+(add-hook
+ 'before-save-hook
+ (lambda ()
+   (let ((col (current-column)))
+     (delete-trailing-whitespace)
+     (indent-to-column col))))
 
 ;; ---------------------------------------------------- [ Emacs Lisp ]
 (add-hook
@@ -267,6 +289,13 @@
 
 ;; ----------------------------------------------------------- [ ERC ]
 (setq erc-fill-column fill-column)
+
+;; ----------------------------------------------- [ Eshell commands ]
+(define-eshell-command grunt
+  "*grunt*" "grunt")
+
+(define-eshell-command django-server
+  "*server*" "./manage.py runserver 0.0.0.0:8000")
 
 ;; -------------------------------------------------------- [ Factor ]
 (setq fuel-factor-root-dir "~/src/factor")
@@ -283,10 +312,6 @@
 (setq google-translate-default-source-language "no"
       google-translate-default-target-language "en")
 
-;; ------------------------------------------------------ [ Ido mode ]
-(ido-mode 'buffers)
-(ido-vertical-mode 1)
-
 ;; ---------------------------------------------------- [ JavaScript ]
 (setq inferior-js-program-command "nodejs")
 
@@ -294,6 +319,11 @@
  'js2-mode-hook
  (lambda ()
    (setq-local fill-column 79)
+   (setq-local
+    prettify-symbols-alist
+    '(("=>" . ?⇒)
+      (">=" . ?≥)
+      ("<=" . ?≤)))
    (local-set-key (kbd "RET") 'js2-line-break)
    (yas-minor-mode 1)
    (subword-mode 1)))
@@ -304,9 +334,6 @@
 (setq js2-strict-trailing-comma-warning nil)
 
 ;; ---------------------------------------------------------- [ Lisp ]
-(eval-after-load "paredit"
-  '(diminish 'paredit-mode))
-
 (autoload 'let-fix "autolet" "Automatic let-form fixer" t)
 
 (defun setup-lisp ()
@@ -424,8 +451,13 @@ nonstopmode' -pdf -f %f"))))
 
 ;; ---------------------------------------------------- [ Projectile ]
 (projectile-global-mode)
-(setq projectile-mode-line
-      '(:eval (format " P[%s]" (projectile-project-name))))
+(helm-projectile-on)
+(setq projectile-mode-line "")
+
+(add-hook
+ 'projectile-mode-hook
+ (lambda ()
+   (define-key projectile-command-map (kbd "s") 'helm-projectile-ag)))
 
 ;; -------------------------------------------------------- [ Python ]
 (add-hook
@@ -445,27 +477,15 @@ nonstopmode' -pdf -f %f"))))
 
    (elpy-mode 1)))
 
-;; ----------------------------------------------------------- [ RDF ]
-(autoload 'ttl-mode "ttl-mode" "Major mode for OWL or Turtle files" t)
-
-(dolist (ext '("\\.n3" "\\.ttl"))
-  (add-to-list 'auto-mode-alist (cons ext 'ttl-mode)))
-
-(setq ttl-electric-semi-mode nil)
-
 ;; -------------------------------------------------------- [ Scheme ]
 (setq geiser-active-implementations '(guile)
       geiser-repl-query-on-kill-p nil)
-
-;; -------------------------------------------------------- [ SPARQL ]
-(dolist (ext '("\\.sparql" "\\.rq"))
-  (add-to-list 'auto-mode-alist (cons ext 'sparql-mode)))
 
 ;; ----------------------------------------------------- [ Text mode ]
 (add-hook 'text-mode-hook (lambda () (auto-fill-mode 1)))
 
 ;; ------------------------------------------------------ [ Web mode ]
-(dolist (ext '("\\.html" "\\.hbs"))
+(dolist (ext '("\\.html" "\\.hbs" "\\.jinja"))
   (add-to-list 'auto-mode-alist (cons ext 'web-mode)))
 
 (setq
@@ -484,8 +504,7 @@ nonstopmode' -pdf -f %f"))))
          (regexp-opt web-mode-django-control-blocks t))
 
    (rainbow-mode 1)
-   (subword-mode 1)
-   (diminish 'rainbow-mode)))
+   (subword-mode 1)))
 
 ;;--------------------------------------------------------- [ Custom ]
 (custom-set-faces
@@ -495,5 +514,7 @@ nonstopmode' -pdf -f %f"))))
  ;; If there is more than one, they won't work right.
  '(erc-input-face ((t (:foreground "#888a85"))))
  '(erc-my-nick-face ((t (:foreground "#888a85" :weight bold))))
+ '(erc-notice-face ((t (:foreground "SlateBlue" :weight bold :height 0.8))))
+ '(flymake-errline ((t (:underline (:color "salmon1" :style wave)))))
  '(magit-blame-header ((t (:inherit magit-diff-file-header))))
  '(slime-repl-inputed-output-face ((t (:foreground "#729fcf"))) t))

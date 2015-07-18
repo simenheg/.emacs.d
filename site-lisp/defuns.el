@@ -27,10 +27,25 @@ point to beginning of line."
     (goto-char (point-min))
     (insert "#include <" header ".h>\n")))
 
+;; Thanks to Mickey Petersen at masteringemacs.org
+(defun clean-mode-line (alist)
+  (interactive)
+  (dolist (cleaner alist)
+    (let* ((mode (car cleaner))
+           (mode-str (cdr cleaner))
+           (old-mode-str (cdr (assq mode minor-mode-alist))))
+      (when old-mode-str
+        (setcar old-mode-str mode-str))
+      ;; Major mode
+      (when (eq mode major-mode)
+        (setq mode-name mode-str)))))
+
 (defun dec-next-number (&optional arg)
   "Decrease first number found after point (ala Vim's C-x)."
   (interactive "p")
   (inc-next-number (* (or arg 1) -1)))
+
+(declare-function dired-next-line "dired" (arg))
 
 (defun dired-beginning-of-buffer ()
   "Jump to the first file listed in Dired."
@@ -94,15 +109,19 @@ point to beginning of line."
     (replace-regexp-in-string " " ": ~a, " symbols)
     symbols)))
 
-(defun grunt ()
-  "Run Grunt in an Eshell buffer, creating it if necessary."
-  (interactive)
-  (let ((eshell-buffer-name "*grunt*"))
-    (eshell)
-    (unless (comint-check-proc (current-buffer))
-      (eshell-return-to-prompt)
-      (insert "grunt")
-      (eshell-send-input))))
+(defmacro define-eshell-command (name buffer-name command)
+  "Define function NAME that runs the given COMMAND in an Eshell
+buffer named BUFFER-NAME, creating it if necessary."
+  `(defun ,name ()
+     (interactive)
+     (declare-function eshell-return-to-prompt "em-hist")
+     (declare-function eshell-send-input "esh-mode")
+     (let ((eshell-buffer-name ,buffer-name))
+       (eshell)
+       (unless (comint-check-proc (current-buffer))
+         (eshell-return-to-prompt)
+         (insert ,command)
+         (eshell-send-input)))))
 
 (defun inc-next-number (&optional arg)
   "Increment first number found after point (ala Vim's C-a)."

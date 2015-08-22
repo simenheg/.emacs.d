@@ -1,11 +1,16 @@
 ;; init.el --- Personal Emacs configurations
 ;; Author: Simen Heggestøyl <simenheg@gmail.com>
 
+(defun conf-path (path)
+  "Return the absolute path of config file/directory PATH."
+  (expand-file-name (concat user-emacs-directory path)))
+
 (setq
  package-archives
- '(("GNU" . "http://elpa.gnu.org/packages/")
+ `(("GNU" . "http://elpa.gnu.org/packages/")
    ("marmalade" . "http://marmalade-repo.org/packages/")
-   ("MELPA" . "http://melpa.org/packages/")))
+   ("MELPA" . "http://stable.melpa.org/packages/")
+   ("local" . ,(conf-path "lisp/packages/"))))
 
 (defvar extra-packages
   '(ace-jump-mode
@@ -15,6 +20,8 @@
     geiser
     google-translate
     helm
+    helm-ag
+    helm-projectile
     ido-vertical-mode
     js2-mode
     json-mode
@@ -23,6 +30,7 @@
     magit
     markdown-mode
     multiple-cursors
+    norwegian-holidays
     paredit
     projectile
     rainbow-mode
@@ -76,12 +84,8 @@
 (show-paren-mode                1) ; Highlight matching parenthesis
 (tool-bar-mode                 -1) ; No tool bar
 
-(defun conf (path)
-  "Return the absolute path of config file/directory PATH."
-  (expand-file-name (concat user-emacs-directory path)))
-
-;; Add site-lisp/ and all subdirectories to the load-path
-(let ((default-directory (conf "site-lisp/")))
+;; Add lisp/ and all subdirectories to the load-path
+(let ((default-directory (conf-path "lisp/")))
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
 
@@ -92,7 +96,6 @@
 (global-set-key (kbd "C-+")     'dec-next-number)
 (global-set-key (kbd "C-=")     'inc-next-number)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
-(global-set-key (kbd "C-c C-p") 'list-packages)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-set-key (kbd "C-c a")   'org-agenda)
@@ -116,7 +119,6 @@
 (global-set-key [C-M-backspace] 'backward-kill-sexp)
 (global-set-key [M-down]        'move-line-down)
 (global-set-key [M-up]          'move-line-up)
-(global-set-key [f5]            'revert-buffer-noconfirm)
 
 ;; -------------------------------------------------------- [ BibTeX ]
 (setq-default bibtex-dialect 'biblatex)
@@ -262,7 +264,7 @@
 (electric-pair-mode 1)
 
 ;; Put #autosave# and backup~ files into own directory
-(let ((autosave-directory (conf "autosaves/")))
+(let ((autosave-directory (conf-path "autosaves/")))
   (setq backup-directory-alist `((".*" . ,autosave-directory)))
   (setq auto-save-file-name-transforms
         `((".*" ,autosave-directory t))))
@@ -287,15 +289,18 @@
 
 (add-hook 'after-save-hook 'auto-byte-recompile)
 
-;; ----------------------------------------------------------- [ ERC ]
-(setq erc-fill-column fill-column)
-
 ;; ----------------------------------------------- [ Eshell commands ]
 (define-eshell-command grunt
   "*grunt*" "grunt")
 
 (define-eshell-command django-server
   "*server*" "./manage.py runserver 0.0.0.0:8000")
+
+(define-eshell-command arc-diff
+  "*arc*" "arc diff HEAD^")
+
+(define-eshell-command arc-land
+  "*arc*" "arc land")
 
 ;; -------------------------------------------------------- [ Factor ]
 (setq fuel-factor-root-dir "~/src/factor")
@@ -372,12 +377,25 @@
 
 (add-hook 'git-commit-mode-hook (lambda () (flyspell-mode 1)))
 
+(defun amend ()
+  (interactive)
+  (insert "Amend: \"yes\"
+-- End of Magit header --\n")
+  (insert (magit-trim-line (magit-format-commit "HEAD" "%s%n%n%b"))))
+
+(add-hook
+ 'magit-log-edit-mode-hook
+ (lambda ()
+   (setq-local fill-column 72)
+   (local-set-key (kbd "C-c C-a") 'amend)
+   (flyspell-mode 1)))
+
 ;; ---------------------------------------------------------- [ Mail ]
 (require 'private-stuff)
 
 (setq mail-from-style               'angles
-      mail-personal-alias-file      (conf "mail-aliases")
-      message-auto-save-directory   (conf "mail-drafts")
+      mail-personal-alias-file      (conf-path "mail-aliases")
+      message-auto-save-directory   (conf-path "mail-drafts")
       rmail-delete-after-output     t
       rmail-file-name               "~/mail/inbox"
       rmail-default-file            "~/mail/archive"
@@ -413,13 +431,16 @@
                  "received-spf"
                  "thread-index"))))
 
+;; ------------------------------------------------------ [ Markdown ]
+(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
+
 ;; -------------------------------------------------------- [ Octave ]
 (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
 
 ;; ----------------------------------------------------------- [ Org ]
 ;; Org agenda
 (setq
- org-agenda-files (conf "org-agenda-files")
+ org-agenda-files (conf-path "org-agenda-files")
  org-agenda-start-on-weekday nil
  org-agenda-include-diary t)
 
@@ -436,7 +457,9 @@
  '(("a" "Agenda" entry (file+headline "~/life.org" "Agenda")
     "** %?" :prepend t)
    ("b" "Bug" entry (file+headline "~/bugs/bugs.org" "Bugs")
-    "** TODO %?")))
+    "** TODO %?")
+   ("m" "Music" entry (file+headline "~/music.org" "Music")
+    "** %?")))
 
 (add-hook
  'org-mode-hook

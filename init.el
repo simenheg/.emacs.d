@@ -24,7 +24,6 @@
     helm-projectile
     ido-vertical-mode
     js2-mode
-    json-mode
     know-your-http-well
     lua-mode
     magit
@@ -64,6 +63,7 @@
  disabled-command-function    nil  ; Enable disabled commands
  display-time-24hr-format       t  ; 24 hour time format
  eshell-hist-ignoredups         t  ; Ignore duplicate history
+ gc-cons-threshold       20000000  ; Run GC only every 20 MB
  history-delete-duplicates      t  ; Delete duplicate history entries
  inhibit-startup-screen         t  ; No startup screen
  initial-scratch-message      nil  ; No scratch message
@@ -296,11 +296,22 @@
 (define-eshell-command django-server
   "*server*" "./manage.py runserver 0.0.0.0:8000")
 
+(define-eshell-command admin-server
+  "*admin-server*" "ember serve")
+
+(define-eshell-command quiz-server
+  "*quiz-server*" "ember serve")
+
 (define-eshell-command arc-diff
   "*arc*" "arc diff HEAD^")
 
 (define-eshell-command arc-land
   "*arc*" "arc land")
+
+;; Workaround for bug #21417, can be removed once it's resolved
+(add-hook
+ 'eshell-mode-hook
+ (lambda () (setq-local paragraph-separate "workaround-for-bug")))
 
 ;; -------------------------------------------------------- [ Factor ]
 (setq fuel-factor-root-dir "~/src/factor")
@@ -526,7 +537,6 @@ nonstopmode' -pdf -f %f"))))
    (setq web-mode-django-control-blocks-regexp
          (regexp-opt web-mode-django-control-blocks t))
 
-   (rainbow-mode 1)
    (subword-mode 1)))
 
 ;;--------------------------------------------------------- [ Custom ]
@@ -540,4 +550,5 @@ nonstopmode' -pdf -f %f"))))
  '(erc-notice-face ((t (:foreground "SlateBlue" :weight bold :height 0.8))))
  '(flymake-errline ((t (:underline (:color "salmon1" :style wave)))))
  '(magit-blame-header ((t (:inherit magit-diff-file-header))))
+ '(magit-diff-file-header ((t (:background "#ffeeff" :foreground "#4183C4" :weight bold :height 1.1 :family "Sans Serif"))))
  '(slime-repl-inputed-output-face ((t (:foreground "#729fcf"))) t))

@@ -10,6 +10,7 @@
  `(("GNU" . "http://elpa.gnu.org/packages/")
    ("marmalade" . "http://marmalade-repo.org/packages/")
    ("MELPA" . "http://stable.melpa.org/packages/")
+   ("magit-1" . "http://magit.vc/elpa/v1/packages/")
    ("local" . ,(conf-path "lisp/packages/"))))
 
 (defvar extra-packages
@@ -37,6 +38,9 @@
     restclient
     smex
     web-mode))
+
+(setq package-pinned-packages
+      '((magit . "magit-v1")))
 
 (package-initialize)
 
@@ -204,7 +208,11 @@
 
 (add-to-list 'auto-mode-alist '("\\.scss$" . scss-mode))
 
-(add-hook 'css-mode-hook (lambda () (rainbow-mode 1)))
+(add-hook
+ 'css-mode-hook
+ (lambda ()
+   (rainbow-mode 1)
+   (yas-minor-mode 1)))
 
 ;; --------------------------------------------------------- [ Dired ]
 (add-hook
@@ -282,7 +290,7 @@
 (add-hook
  'emacs-lisp-mode-hook
  (lambda ()
-   (local-set-key (kbd "C-c C-b") 'eval-buffer)
+   (setq-local fill-column 72)
    (eldoc-mode 1)))
 
 (add-hook 'ielm-mode-hook (lambda () (eldoc-mode 1)))
@@ -349,6 +357,11 @@
 
 (setq js2-strict-trailing-comma-warning nil)
 
+;; ---------------------------------------------------------- [ JSON ]
+(require 'json-mode)
+
+(add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
+
 ;; ---------------------------------------------------------- [ Lisp ]
 (autoload 'let-fix "autolet" "Automatic let-form fixer" t)
 
@@ -388,19 +401,6 @@
 
 (add-hook 'git-commit-mode-hook (lambda () (flyspell-mode 1)))
 
-(defun amend ()
-  (interactive)
-  (insert "Amend: \"yes\"
--- End of Magit header --\n")
-  (insert (magit-trim-line (magit-format-commit "HEAD" "%s%n%n%b"))))
-
-(add-hook
- 'magit-log-edit-mode-hook
- (lambda ()
-   (setq-local fill-column 72)
-   (local-set-key (kbd "C-c C-a") 'amend)
-   (flyspell-mode 1)))
-
 ;; ---------------------------------------------------------- [ Mail ]
 (require 'private-stuff)
 
@@ -411,8 +411,6 @@
       rmail-file-name               "~/mail/inbox"
       rmail-default-file            "~/mail/archive"
       rmail-movemail-variant-in-use 'mailutils
-      send-mail-function            'smtpmail-send-it
-      smtpmail-smtp-server          "smtp.uio.no"
       smtpmail-smtp-service         587
       gnutls-min-prime-bits         nil)
 
@@ -484,6 +482,8 @@
 nonstopmode' -pdf -f %f"))))
 
 ;; ---------------------------------------------------- [ Projectile ]
+(require 'grep)
+
 (projectile-global-mode)
 (helm-projectile-on)
 (setq projectile-mode-line "")

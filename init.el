@@ -15,8 +15,10 @@
 
 (defvar extra-packages
   '(ace-jump-mode
+    cider
     elpy
     exec-path-from-shell
+    focus
     fuel
     geiser
     google-translate
@@ -30,6 +32,7 @@
     magit
     markdown-mode
     multiple-cursors
+    nodejs-repl
     norwegian-holidays
     paredit
     projectile
@@ -37,10 +40,11 @@
     rdf-prefix
     restclient
     smex
+    undo-tree
     web-mode))
 
 (setq package-pinned-packages
-      '((magit . "magit-v1")))
+      '((magit . "magit-1")))
 
 (package-initialize)
 
@@ -67,6 +71,7 @@
  disabled-command-function    nil  ; Enable disabled commands
  display-time-24hr-format       t  ; 24 hour time format
  eshell-hist-ignoredups         t  ; Ignore duplicate history
+ eshell-history-size         1000  ; Lengthen Eshell history
  gc-cons-threshold       20000000  ; Run GC only every 20 MB
  history-delete-duplicates      t  ; Delete duplicate history entries
  inhibit-startup-screen         t  ; No startup screen
@@ -81,6 +86,7 @@
 (fset 'yes-or-no-p      'y-or-n-p) ; Make "yes/no" prompts "y/n"
 (global-auto-revert-mode        1) ; Reload files after modification
 (global-prettify-symbols-mode   1) ; Pretty symbols (e.g. lambda => λ)
+(global-undo-tree-mode          1) ; Undo trees everywhere
 (ido-vertical-mode              1) ; Display ido-mode vertically
 (menu-bar-mode                 -1) ; No menu bar
 (prefer-coding-system      'utf-8) ; Always prefer UTF-8
@@ -100,6 +106,7 @@
 (global-set-key (kbd "C-+")     'dec-next-number)
 (global-set-key (kbd "C-=")     'inc-next-number)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
+(global-set-key (kbd "C-c C-p") 'wgrep-change-to-wgrep-mode)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-set-key (kbd "C-c a")   'org-agenda)
@@ -123,6 +130,9 @@
 (global-set-key [C-M-backspace] 'backward-kill-sexp)
 (global-set-key [M-down]        'move-line-down)
 (global-set-key [M-up]          'move-line-up)
+
+;; ------------------------------------------------------- [ Arduino ]
+(add-to-list 'auto-mode-alist '("\\.ino$" . c-mode))
 
 ;; -------------------------------------------------------- [ BibTeX ]
 (setq-default bibtex-dialect 'biblatex)
@@ -177,11 +187,27 @@
     (python-mode . "Py")
     (rainbow-mode . "")
     (subword-mode . "")
+    (undo-tree-mode "")
     (yas-minor-mode . "")))
 
 (add-hook
  'after-change-major-mode-hook
  (lambda () (clean-mode-line clean-mode-line-alist)))
+
+;; ------------------------------------------------------- [ Clojure ]
+(require 'clojure-mode)
+
+;; Extra macro indentation directives
+(define-clojure-indent
+  (defroutes 'defun)
+  (GET 2)
+  (POST 2)
+  (PUT 2)
+  (DELETE 2)
+  (HEAD 2)
+  (ANY 2)
+  (context 2)
+  (render 1))
 
 ;; --------------------------------------------------- [ Color-theme ]
 (load-theme 'leuven t)
@@ -205,8 +231,11 @@
 
 ;; -------------------------------------------------------- [ (S)CSS ]
 (require 'css-mode-25.1)
+(require 'rainbow-mode)
 
 (add-to-list 'auto-mode-alist '("\\.scss$" . scss-mode))
+
+(add-to-list 'rainbow-html-colors-major-mode-list 'scss-mode)
 
 (add-hook
  'css-mode-hook
@@ -282,9 +311,10 @@
 (add-hook
  'before-save-hook
  (lambda ()
-   (let ((col (current-column)))
-     (delete-trailing-whitespace)
-     (indent-to-column col))))
+   (unless (eq major-mode 'diff-mode)
+     (let ((col (current-column)))
+       (delete-trailing-whitespace)
+       (indent-to-column col)))))
 
 ;; ---------------------------------------------------- [ Emacs Lisp ]
 (add-hook
@@ -348,6 +378,7 @@
     '(("=>" . ?⇒)
       (">=" . ?≥)
       ("<=" . ?≤)))
+   (local-set-key (kbd "C-j") 'js2-line-break)
    (local-set-key (kbd "RET") 'js2-line-break)
    (yas-minor-mode 1)
    (subword-mode 1)))
@@ -360,8 +391,6 @@
 ;; ---------------------------------------------------------- [ JSON ]
 (require 'json-mode)
 
-(add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
-
 ;; ---------------------------------------------------------- [ Lisp ]
 (autoload 'let-fix "autolet" "Automatic let-form fixer" t)
 
@@ -371,7 +400,10 @@
 
 (mapc
  (lambda (m) (add-hook m 'setup-lisp))
- '(emacs-lisp-mode-hook
+ '(cider-repl-mode
+   clojure-mode
+   clojurescript-mode
+   emacs-lisp-mode-hook
    geiser-repl-mode-hook
    ielm-mode-hook
    inferior-lisp-mode-hook
@@ -451,7 +483,8 @@
 (setq
  org-agenda-files (conf-path "org-agenda-files")
  org-agenda-start-on-weekday nil
- org-agenda-include-diary t)
+ org-agenda-include-diary t
+ org-clock-clocked-in-display nil)
 
 ;; Ignore irrelevant holidays
 (setq
@@ -468,7 +501,7 @@
    ("b" "Bug" entry (file+headline "~/bugs/bugs.org" "Bugs")
     "** TODO %?")
    ("m" "Music" entry (file+headline "~/music.org" "Music")
-    "** %?")))
+    "** TODO %?")))
 
 (add-hook
  'org-mode-hook
@@ -500,12 +533,19 @@ nonstopmode' -pdf -f %f"))))
    (setq-local fill-column 79)
    (declare-function elpy-use-ipython "elpy")
 
+   (setq-local
+    prettify-symbols-alist
+    '(("!=" . ?≠)
+      ("<=" . ?≤)
+      (">=" . ?≥)))
+
    (elpy-enable)
-   (elpy-use-ipython)
 
    (add-hook
     'elpy-mode-hook
     (lambda ()
+      (declare-function elpy-set-test-runner "elpy")
+      (elpy-set-test-runner 'elpy-test-pytest-runner)
       (highlight-indentation-mode 0)
       (subword-mode 1)))
 
@@ -545,9 +585,12 @@ nonstopmode' -pdf -f %f"))))
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(erc-input-face ((t (:foreground "#888a85"))))
+ '(erc-default-face ((t (:family "Sans Serif"))))
+ '(erc-input-face ((t (:foreground "#888a85" :family "Sans Serif"))))
  '(erc-my-nick-face ((t (:foreground "#888a85" :weight bold))))
+ '(erc-nick-default-face ((t (:weight bold :family "Sans Serif"))))
  '(erc-notice-face ((t (:foreground "SlateBlue" :weight bold :height 0.8))))
+ '(erc-timestamp-face ((t (:foreground "pale green" :weight bold))))
  '(flymake-errline ((t (:underline (:color "salmon1" :style wave)))))
  '(magit-blame-header ((t (:inherit magit-diff-file-header))))
  '(magit-diff-file-header ((t (:background "#ffeeff" :foreground "#4183C4" :weight bold :height 1.1 :family "Sans Serif"))))

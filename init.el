@@ -9,13 +9,23 @@
  package-archives
  `(("GNU" . "http://elpa.gnu.org/packages/")
    ("marmalade" . "http://marmalade-repo.org/packages/")
-   ("MELPA" . "http://stable.melpa.org/packages/")
+   ("MELPA Stable" . "http://stable.melpa.org/packages/")
+   ("MELPA" . "http://melpa.org/packages/")
    ("magit-1" . "http://magit.vc/elpa/v1/packages/")
    ("local" . ,(conf-path "lisp/packages/"))))
 
-(defvar extra-packages
+(setq
+ package-archive-priorities
+ '(("local" . 4)
+   ("GNU" . 3)
+   ("MELPA Stable" . 2)
+   ("marmalade" . 2)
+   ("MELPA" . 1)))
+
+(defvar package-selected-packages
   '(ace-jump-mode
     cider
+    debbugs
     elpy
     exec-path-from-shell
     focus
@@ -27,6 +37,7 @@
     helm-projectile
     ido-vertical-mode
     js2-mode
+    json-mode
     know-your-http-well
     lua-mode
     magit
@@ -41,7 +52,8 @@
     restclient
     smex
     undo-tree
-    web-mode))
+    web-mode
+    wgrep-helm))
 
 (setq package-pinned-packages
       '((magit . "magit-1")))
@@ -52,9 +64,7 @@
   (package-refresh-contents))
 
 ;; Install missing packages
-(dolist (p extra-packages)
-  (unless (package-installed-p p)
-    (package-install p)))
+(package-install-selected-packages)
 
 (set-language-environment "UTF-8")
 (exec-path-from-shell-initialize)
@@ -83,6 +93,7 @@
 
 (blink-cursor-mode              0) ; No blinking cursor
 (column-number-mode             1) ; Show column number
+(electric-quote-mode            1) ; Easier “quote” typing
 (fset 'yes-or-no-p      'y-or-n-p) ; Make "yes/no" prompts "y/n"
 (global-auto-revert-mode        1) ; Reload files after modification
 (global-prettify-symbols-mode   1) ; Pretty symbols (e.g. lambda => λ)
@@ -178,7 +189,6 @@
 (defvar clean-mode-line-alist
   '((auto-fill-function . "")
     (dired-omit-mode . "")
-    (eldoc-mode . "")
     (elpy-mode . "")
     (emacs-lisp-mode . "Elisp")
     (js2-mode "js2")
@@ -230,12 +240,6 @@
      (read-kbd-macro paredit-backward-delete-key) nil)))
 
 ;; -------------------------------------------------------- [ (S)CSS ]
-(require 'css-mode-25.1)
-(require 'rainbow-mode)
-
-(add-to-list 'auto-mode-alist '("\\.scss$" . scss-mode))
-
-(add-to-list 'rainbow-html-colors-major-mode-list 'scss-mode)
 
 (add-hook
  'css-mode-hook
@@ -319,11 +323,7 @@
 ;; ---------------------------------------------------- [ Emacs Lisp ]
 (add-hook
  'emacs-lisp-mode-hook
- (lambda ()
-   (setq-local fill-column 72)
-   (eldoc-mode 1)))
-
-(add-hook 'ielm-mode-hook (lambda () (eldoc-mode 1)))
+ (lambda () (setq-local fill-column 72)))
 
 (add-hook 'after-save-hook 'auto-byte-recompile)
 
@@ -373,11 +373,6 @@
  'js2-mode-hook
  (lambda ()
    (setq-local fill-column 79)
-   (setq-local
-    prettify-symbols-alist
-    '(("=>" . ?⇒)
-      (">=" . ?≥)
-      ("<=" . ?≤)))
    (local-set-key (kbd "C-j") 'js2-line-break)
    (local-set-key (kbd "RET") 'js2-line-break)
    (yas-minor-mode 1)
@@ -514,6 +509,9 @@
      '("latexmk -pdflatex='pdflatex -shell-escape -interaction \
 nonstopmode' -pdf -f %f"))))
 
+;; ------------------------------------------------------ [ Packages ]
+(setq package-menu-hide-low-priority t)
+
 ;; ---------------------------------------------------- [ Projectile ]
 (require 'grep)
 
@@ -585,6 +583,7 @@ nonstopmode' -pdf -f %f"))))
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(Info-quoted ((t nil)))
  '(erc-default-face ((t (:family "Sans Serif"))))
  '(erc-input-face ((t (:foreground "#888a85" :family "Sans Serif"))))
  '(erc-my-nick-face ((t (:foreground "#888a85" :weight bold))))

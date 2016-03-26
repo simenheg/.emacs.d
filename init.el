@@ -53,7 +53,7 @@
     smex
     undo-tree
     web-mode
-    wgrep-helm))
+    yaml-mode))
 
 (setq package-pinned-packages
       '((magit . "magit-1")))
@@ -117,7 +117,7 @@
 (global-set-key (kbd "C-+")     'dec-next-number)
 (global-set-key (kbd "C-=")     'inc-next-number)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
-(global-set-key (kbd "C-c C-p") 'wgrep-change-to-wgrep-mode)
+(global-set-key (kbd "C-c C-'") 'electric-quote-mode)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-set-key (kbd "C-c a")   'org-agenda)
@@ -341,10 +341,13 @@
   "*quiz-server*" "ember serve")
 
 (define-eshell-command arc-diff
-  "*arc*" "arc diff HEAD^")
+  "*arc*" "./arc-diff HEAD^")
 
 (define-eshell-command arc-land
   "*arc*" "arc land")
+
+(define-eshell-command maildev
+  "*maildev*" "maildev")
 
 ;; Workaround for bug #21417, can be removed once it's resolved
 (add-hook
@@ -385,6 +388,9 @@
 
 ;; ---------------------------------------------------------- [ JSON ]
 (require 'json-mode)
+
+(dolist (filename '(".arcconfig" ".bowerrc" ".eslintrc"))
+  (add-to-list 'auto-mode-alist (cons filename 'json-mode)))
 
 ;; ---------------------------------------------------------- [ Lisp ]
 (autoload 'let-fix "autolet" "Automatic let-form fixer" t)

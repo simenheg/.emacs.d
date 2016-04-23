@@ -26,6 +26,7 @@
   '(ace-jump-mode
     cider
     debbugs
+    editorconfig
     elpy
     exec-path-from-shell
     focus
@@ -239,6 +240,14 @@
    (define-key slime-repl-mode-map
      (read-kbd-macro paredit-backward-delete-key) nil)))
 
+;; ------------------------------------------------------- [ Company ]
+(require 'company)
+
+(setq company-minimum-prefix-length 2)
+(setq company-idle-delay 0.1)
+
+(add-hook 'prog-mode-hook #'company-mode-on)
+
 ;; -------------------------------------------------------- [ (S)CSS ]
 
 (add-hook
@@ -341,6 +350,9 @@
   "*quiz-server*" "ember serve")
 
 (define-eshell-command arc-diff
+  "*arc*" "arc diff HEAD^")
+
+(define-eshell-command arc-diff-qw
   "*arc*" "./arc-diff HEAD^")
 
 (define-eshell-command arc-land
@@ -476,6 +488,12 @@
 ;; ------------------------------------------------------ [ Markdown ]
 (add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
 
+(declare-function markdown-export-and-preview "markdown-mode")
+(add-hook
+ 'markdown-mode-hook
+ (lambda ()
+   (local-set-key (kbd "C-c C-e") #'markdown-export-and-preview)))
+
 ;; -------------------------------------------------------- [ Octave ]
 (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
 
@@ -554,6 +572,9 @@ nonstopmode' -pdf -f %f"))))
       (subword-mode 1)))
 
    (elpy-mode 1)))
+
+;; --------------------------------------------------- [ REST Client ]
+(add-to-list 'auto-mode-alist '("\\.http" . restclient-mode))
 
 ;; -------------------------------------------------------- [ Scheme ]
 (setq geiser-active-implementations '(guile)

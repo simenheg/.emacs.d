@@ -25,6 +25,7 @@
 (defvar package-selected-packages
   '(ace-jump-mode
     cider
+    cycle-quotes
     debbugs
     editorconfig
     elpy
@@ -40,6 +41,7 @@
     js2-mode
     json-mode
     know-your-http-well
+    lorem-ipsum
     lua-mode
     magit
     markdown-mode
@@ -51,9 +53,12 @@
     rainbow-mode
     rdf-prefix
     restclient
+    restclient-test
     smex
     undo-tree
     web-mode
+    wgrep
+    xref-js2
     yaml-mode))
 
 (setq package-pinned-packages
@@ -94,11 +99,12 @@
 
 (blink-cursor-mode              0) ; No blinking cursor
 (column-number-mode             1) ; Show column number
+(editorconfig-mode              1) ; Respect EditorConfig files
 (electric-quote-mode            1) ; Easier “quote” typing
 (fset 'yes-or-no-p      'y-or-n-p) ; Make "yes/no" prompts "y/n"
 (global-auto-revert-mode        1) ; Reload files after modification
 (global-prettify-symbols-mode   1) ; Pretty symbols (e.g. lambda => λ)
-(global-undo-tree-mode          1) ; Undo trees everywhere
+(global-subword-mode            1) ; Better editing of camelCasedWords
 (ido-vertical-mode              1) ; Display ido-mode vertically
 (menu-bar-mode                 -1) ; No menu bar
 (prefer-coding-system      'utf-8) ; Always prefer UTF-8
@@ -117,6 +123,8 @@
 (global-set-key (kbd "C-'")     'org-cycle-agenda-files)
 (global-set-key (kbd "C-+")     'dec-next-number)
 (global-set-key (kbd "C-=")     'inc-next-number)
+(global-set-key (kbd "C-S-k")   'kill-whole-line)
+(global-set-key (kbd "C-\"")    'cycle-quotes)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
 (global-set-key (kbd "C-c C-'") 'electric-quote-mode)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
@@ -138,6 +146,7 @@
 (global-set-key (kbd "C-x b")   'helm-buffers-list)
 (global-set-key (kbd "C-x k")   'kill-this-buffer)
 (global-set-key (kbd "C-z")     'bury-buffer)
+(global-set-key (kbd "M-i")     'imenu)
 (global-set-key (kbd "M-x")     'smex)
 (global-set-key [C-M-backspace] 'backward-kill-sexp)
 (global-set-key [M-down]        'move-line-down)
@@ -189,6 +198,7 @@
 ;; ----------------------------------------------- [ Clean Mode Line ]
 (defvar clean-mode-line-alist
   '((auto-fill-function . "")
+    (company-mode . "")
     (dired-omit-mode . "")
     (elpy-mode . "")
     (emacs-lisp-mode . "Elisp")
@@ -249,6 +259,7 @@
 (add-hook 'prog-mode-hook #'company-mode-on)
 
 ;; -------------------------------------------------------- [ (S)CSS ]
+(require 'css-lookup)
 
 (add-hook
  'css-mode-hook
@@ -332,9 +343,19 @@
 ;; ---------------------------------------------------- [ Emacs Lisp ]
 (add-hook
  'emacs-lisp-mode-hook
- (lambda () (setq-local fill-column 72)))
+ (lambda ()
+   (setq-local
+    prettify-symbols-alist
+    '(("lambda" . ?λ)
+      ("/=" . ?≠)
+      ("<=" . ?≤)
+      (">=" . ?≥)))
+   (setq-local fill-column 72)))
 
 (add-hook 'after-save-hook 'auto-byte-recompile)
+
+;; ----------------------------------------------------------- [ ERC ]
+(setq erc-fill-column fill-column)
 
 ;; ----------------------------------------------- [ Eshell commands ]
 (define-eshell-command grunt
@@ -342,6 +363,9 @@
 
 (define-eshell-command django-server
   "*server*" "./manage.py runserver 0.0.0.0:8000")
+
+(define-eshell-command ember-server
+  "*ember-server*" "ember serve")
 
 (define-eshell-command admin-server
   "*admin-server*" "ember serve")
@@ -390,8 +414,7 @@
    (setq-local fill-column 79)
    (local-set-key (kbd "C-j") 'js2-line-break)
    (local-set-key (kbd "RET") 'js2-line-break)
-   (yas-minor-mode 1)
-   (subword-mode 1)))
+   (yas-minor-mode 1)))
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
@@ -552,7 +575,9 @@ nonstopmode' -pdf -f %f"))))
 (add-hook
  'python-mode-hook
  (lambda ()
+   (defvar python-fill-docstring-style)
    (setq-local fill-column 79)
+   (setq-local python-fill-docstring-style 'pep-257-nn)
    (declare-function elpy-use-ipython "elpy")
 
    (setq-local
@@ -568,13 +593,18 @@ nonstopmode' -pdf -f %f"))))
     (lambda ()
       (declare-function elpy-set-test-runner "elpy")
       (elpy-set-test-runner 'elpy-test-pytest-runner)
-      (highlight-indentation-mode 0)
-      (subword-mode 1)))
+      (highlight-indentation-mode 0)))
 
    (elpy-mode 1)))
 
 ;; --------------------------------------------------- [ REST Client ]
 (add-to-list 'auto-mode-alist '("\\.http" . restclient-mode))
+
+(add-hook
+ 'restclient-mode-hook
+ (lambda ()
+   (local-set-key
+    (kbd "C-c C-c") 'restclient-http-send-current-stay-in-window)))
 
 ;; -------------------------------------------------------- [ Scheme ]
 (setq geiser-active-implementations '(guile)
@@ -600,9 +630,7 @@ nonstopmode' -pdf -f %f"))))
    (push "editable" web-mode-django-control-blocks)
    (push "endeditable" web-mode-django-control-blocks)
    (setq web-mode-django-control-blocks-regexp
-         (regexp-opt web-mode-django-control-blocks t))
-
-   (subword-mode 1)))
+         (regexp-opt web-mode-django-control-blocks t))))
 
 ;;--------------------------------------------------------- [ Custom ]
 (custom-set-faces

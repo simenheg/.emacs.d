@@ -23,7 +23,7 @@
    ("MELPA" . 1)))
 
 (defvar package-selected-packages
-  '(ace-jump-mode
+  '(avy
     cider
     cycle-quotes
     debbugs
@@ -38,6 +38,7 @@
     helm-ag
     helm-projectile
     ido-vertical-mode
+    ivy
     js2-mode
     json-mode
     know-your-http-well
@@ -58,6 +59,7 @@
     undo-tree
     web-mode
     wgrep
+    wgrep-ag
     xref-js2
     yaml-mode))
 
@@ -128,7 +130,7 @@
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
 (global-set-key (kbd "C-c C-'") 'electric-quote-mode)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
-(global-set-key (kbd "C-c SPC") 'ace-jump-mode)
+(global-set-key (kbd "C-c SPC") 'avy-goto-word-1)
 (global-set-key (kbd "C-c a")   'org-agenda)
 (global-set-key (kbd "C-c c")   'org-capture)
 (global-set-key (kbd "C-c d")   'duplicate)
@@ -143,17 +145,22 @@
 (global-set-key (kbd "C-j")     'newline)
 (global-set-key (kbd "C-w")     'kill-region-or-backward-kill-sexp)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
-(global-set-key (kbd "C-x b")   'helm-buffers-list)
+(global-set-key (kbd "C-x b")   'ivy-switch-buffer)
 (global-set-key (kbd "C-x k")   'kill-this-buffer)
 (global-set-key (kbd "C-z")     'bury-buffer)
-(global-set-key (kbd "M-i")     'imenu)
-(global-set-key (kbd "M-x")     'smex)
+(global-set-key (kbd "M-i")     'counsel-imenu)
+(global-set-key (kbd "M-o")     'other-window)
+(global-set-key (kbd "M-x")     'counsel-M-x)
 (global-set-key [C-M-backspace] 'backward-kill-sexp)
+(global-set-key [C-tab]         'tidy-buffer)
 (global-set-key [M-down]        'move-line-down)
 (global-set-key [M-up]          'move-line-up)
 
 ;; ------------------------------------------------------- [ Arduino ]
 (add-to-list 'auto-mode-alist '("\\.ino$" . c-mode))
+
+;; ----------------------------------------------------------- [ Avy ]
+(setq avy-background t)
 
 ;; -------------------------------------------------------- [ BibTeX ]
 (setq-default bibtex-dialect 'biblatex)
@@ -275,6 +282,8 @@
 
    (load "dired-x")
 
+   (local-set-key (kbd "C-c C-w") 'wdired-change-to-wdired-mode)
+
    (define-key dired-mode-map
      (vector 'remap 'end-of-buffer) 'dired-end-of-buffer)
 
@@ -295,7 +304,6 @@
 (setq-default dired-listing-switches "-alh --time-style=+")
 
 (setq
- dired-dwim-target t                   ; Let Dired guess target
  dired-omit-verbose nil                ; Be quiet about omitted files
  dired-recursive-copies 'always        ; Don't ask, just copy
  global-auto-revert-non-file-buffers t ; Auto-refresh the file list
@@ -344,6 +352,7 @@
 (add-hook
  'emacs-lisp-mode-hook
  (lambda ()
+   (setq sentence-end-double-space t)
    (setq-local
     prettify-symbols-alist
     '(("lambda" . ?λ)
@@ -404,6 +413,10 @@
 
 (setq google-translate-default-source-language "no"
       google-translate-default-target-language "en")
+
+;; ----------------------------------------------------------- [ Ivy ]
+(require 'ivy)
+(push '(counsel-M-x . "") ivy-initial-inputs-alist)
 
 ;; ---------------------------------------------------- [ JavaScript ]
 (setq inferior-js-program-command "nodejs")
@@ -569,7 +582,8 @@ nonstopmode' -pdf -f %f"))))
 (add-hook
  'projectile-mode-hook
  (lambda ()
-   (define-key projectile-command-map (kbd "s") 'helm-projectile-ag)))
+   (define-key projectile-command-map (kbd "s") 'helm-projectile-ag)
+   (define-key projectile-command-map (kbd "f") 'helm-projectile-find-file)))
 
 ;; -------------------------------------------------------- [ Python ]
 (add-hook
@@ -603,6 +617,7 @@ nonstopmode' -pdf -f %f"))))
 (add-hook
  'restclient-mode-hook
  (lambda ()
+   (restclient-test-mode 1)
    (local-set-key
     (kbd "C-c C-c") 'restclient-http-send-current-stay-in-window)))
 
@@ -620,6 +635,7 @@ nonstopmode' -pdf -f %f"))))
 (setq
  web-mode-engines-alist '(("django" . "\\.html"))
  web-mode-enable-auto-pairing nil
+ web-mode-attr-indent-offset 2
  web-mode-markup-indent-offset 2)
 
 (add-hook
@@ -639,6 +655,7 @@ nonstopmode' -pdf -f %f"))))
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(Info-quoted ((t nil)))
+ '(avy-lead-face ((t (:background "#fbe448" :foreground "black"))))
  '(erc-default-face ((t (:family "Sans Serif"))))
  '(erc-input-face ((t (:foreground "#888a85" :family "Sans Serif"))))
  '(erc-my-nick-face ((t (:foreground "#888a85" :weight bold))))
@@ -646,6 +663,16 @@ nonstopmode' -pdf -f %f"))))
  '(erc-notice-face ((t (:foreground "SlateBlue" :weight bold :height 0.8))))
  '(erc-timestamp-face ((t (:foreground "pale green" :weight bold))))
  '(flymake-errline ((t (:underline (:color "salmon1" :style wave)))))
+ '(geiser-font-lock-repl-prompt ((t (:inherit comint-highlight-prompt))))
+ '(git-commit-summary-face ((t (:foreground "#000000"))))
+ '(ivy-current-match ((t (:background "#FFF876" :foreground "black"))))
+ '(ivy-minibuffer-match-face-1 ((t nil)))
+ '(ivy-minibuffer-match-face-2 ((t (:background "#FBE448" :weight bold))))
+ '(ivy-minibuffer-match-face-3 ((t (:background "#FBE448" :weight bold))))
+ '(ivy-minibuffer-match-face-4 ((t (:background "#FBE448" :weight bold))))
  '(magit-blame-header ((t (:inherit magit-diff-file-header))))
  '(magit-diff-file-header ((t (:background "#ffeeff" :foreground "#4183C4" :weight bold :height 1.1 :family "Sans Serif"))))
+ '(magit-log-author ((t (:foreground "firebrick"))))
+ '(magit-log-message ((t nil)))
+ '(nxml-element-local-name ((t (:background "white smoke" :foreground "SteelBlue" :box (:line-width 1 :color "light gray")))))
  '(slime-repl-inputed-output-face ((t (:foreground "#729fcf"))) t))

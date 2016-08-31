@@ -148,6 +148,11 @@ create a new session."
       (insert "-")))
   (insert " [ " title " ]"))
 
+(defun insert-random-string (len)
+  "Insert a random alphanumeric ASCII-string of length LEN."
+  (interactive "NLength: ")
+  (insert (random-string (or len 32))))
+
 (defun kill-region-or-backward-kill-sexp (&optional arg region)
   "`kill-region' if the region is active, otherwise
 `backward-kill-sexp'"
@@ -190,6 +195,24 @@ Point stays at the same position in the original line."
     (transpose-lines 1)
     (forward-line -2)
     (move-to-column col)))
+
+(defun random-char ()
+  "Return a random alphanumeric ASCII-character."
+  (random-elt
+   (append (number-sequence ?0 ?9)
+           (number-sequence ?a ?z)
+           (number-sequence ?A ?Z))))
+
+(defun random-elt (list)
+  "Return a random element from the list LIST."
+  (nth (random (length list)) list))
+
+(defun random-string (len)
+  "Return a random alphanumeric ASCII-string of length LEN."
+  (let ((chars '()))
+    (dotimes (_ len)
+      (push (random-char) chars))
+    (apply #'string chars)))
 
 (defun revert-buffer-noconfirm ()
   "Like `revert-buffer', but don't ask for confirmation."

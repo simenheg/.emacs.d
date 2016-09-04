@@ -71,22 +71,27 @@ point to beginning of line."
     ad-do-it))
 
 (defun duplicate (arg)
-  "Duplicate the current line, or region if active."
-  (interactive "p")
-  (let ((beginning
-         (if (region-active-p)
-             (region-beginning)
-           (line-beginning-position)))
-        (end
-         (if (region-active-p)
-             (region-end)
-           (line-end-position)))
+  "Duplicate the current line, or region if active.
+When called with a prefix argument the current line or region is
+commented out before it's copied."
+  (interactive "P")
+  (setq arg (or arg 1))
+  (let ((beg (if (region-active-p)
+                 (region-beginning)
+               (line-beginning-position)))
+        (end (if (region-active-p)
+                 (region-end)
+               (line-end-position)))
         (point (point)))
     (goto-char end)
-    (dotimes (_ arg)
-      (end-of-line)
-      (newline)
-      (insert (buffer-substring beginning end)))
+    (let ((to-duplicate (buffer-substring beg end)))
+      (when (listp arg)
+        (comment-region beg end)
+        (setq arg 1))
+      (dotimes (_ arg)
+        (end-of-line)
+        (newline)
+        (insert to-duplicate)))
     (backward-char (- end point))))
 
 (defadvice eval-last-sexp (around replace-sexp (arg) activate)

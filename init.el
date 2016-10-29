@@ -23,8 +23,12 @@
    ("MELPA" . 1)))
 
 (defvar package-selected-packages
-  '(avy
+  '(anaconda-mode
+    avy
     cider
+    company
+    company-anaconda
+    company-quickhelp
     cycle-quotes
     debbugs
     editorconfig
@@ -33,6 +37,7 @@
     focus
     fuel
     geiser
+    gnuplot
     google-translate
     helm
     helm-ag
@@ -79,7 +84,8 @@
 
 (setq-default
  indent-tabs-mode             nil  ; Use spaces for indentation
- major-mode             'org-mode) ; Org-mode as default mode
+ major-mode             'org-mode  ; Org-mode as default mode
+ tab-width                      4) ; Tabs are four spaces wide
 
 (setq
  auto-revert-verbose          nil  ; Be quiet about reverts
@@ -149,8 +155,8 @@
 (global-set-key (kbd "C-x k")   'kill-this-buffer)
 (global-set-key (kbd "C-z")     'bury-buffer)
 (global-set-key (kbd "M-i")     'counsel-imenu)
-(global-set-key (kbd "M-o")     'other-window)
 (global-set-key (kbd "M-x")     'counsel-M-x)
+(global-set-key (kbd "M-s l")   'sort-lines)
 (global-set-key [C-M-backspace] 'backward-kill-sexp)
 (global-set-key [C-tab]         'tidy-buffer)
 (global-set-key [M-down]        'move-line-down)
@@ -394,6 +400,9 @@
 (define-eshell-command maildev
   "*maildev*" "maildev")
 
+(define-eshell-command npm-watch
+  "*npm-watch*" "npm run watch")
+
 ;; Workaround for bug #21417, can be removed once it's resolved
 (add-hook
  'eshell-mode-hook
@@ -437,7 +446,7 @@
 ;; ---------------------------------------------------------- [ JSON ]
 (require 'json-mode)
 
-(dolist (filename '(".arcconfig" ".bowerrc" ".eslintrc"))
+(dolist (filename '(".arcconfig" ".arclint" ".bowerrc" ".eslintrc"))
   (add-to-list 'auto-mode-alist (cons filename 'json-mode)))
 
 ;; ---------------------------------------------------------- [ Lisp ]
@@ -538,8 +547,7 @@
 (setq
  org-agenda-files (conf-path "org-agenda-files")
  org-agenda-start-on-weekday nil
- org-agenda-include-diary t
- org-clock-clocked-in-display nil)
+ org-agenda-include-diary t)
 
 ;; Ignore irrelevant holidays
 (setq
@@ -573,26 +581,42 @@ nonstopmode' -pdf -f %f"))))
 (setq package-menu-hide-low-priority t)
 
 ;; ---------------------------------------------------- [ Projectile ]
-(require 'grep)
-
 (projectile-global-mode)
-(helm-projectile-on)
+
+(setq projectile-completion-system 'ivy)
 (setq projectile-mode-line "")
 
 (add-hook
  'projectile-mode-hook
  (lambda ()
-   (define-key projectile-command-map (kbd "s") 'helm-projectile-ag)
-   (define-key projectile-command-map (kbd "f") 'helm-projectile-find-file)))
+   (define-key projectile-command-map (kbd "s") 'helm-projectile-ag)))
 
 ;; -------------------------------------------------------- [ Python ]
+
+(eval-after-load "company"
+  '(add-to-list 'company-backends 'company-anaconda))
+
+(add-hook 'python-mode-hook 'anaconda-mode)
+(add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+
 (add-hook
  'python-mode-hook
+ (lambda ()
+   (setq-local
+    prettify-symbols-alist
+    '(("!=" . ?≠)
+      ("<=" . ?≤)
+      (">=" . ?≥)))))
+
+(add-hook
+ 'anaconda-mode-hook
  (lambda ()
    (defvar python-fill-docstring-style)
    (setq-local fill-column 79)
    (setq-local python-fill-docstring-style 'pep-257-nn)
-   (declare-function elpy-use-ipython "elpy")
+
+   (yas-minor-mode 1)
+   (flycheck-mode 1)
 
    (setq-local
     prettify-symbols-alist
@@ -600,16 +624,9 @@ nonstopmode' -pdf -f %f"))))
       ("<=" . ?≤)
       (">=" . ?≥)))
 
-   (elpy-enable)
-
-   (add-hook
-    'elpy-mode-hook
-    (lambda ()
-      (declare-function elpy-set-test-runner "elpy")
-      (elpy-set-test-runner 'elpy-test-pytest-runner)
-      (highlight-indentation-mode 0)))
-
-   (elpy-mode 1)))
+   (require 'elpy)
+   (declare-function elpy-test-pytest-runner "elpy")
+   (local-set-key (kbd "C-c C-t") #'elpy-test-pytest-runner)))
 
 ;; --------------------------------------------------- [ REST Client ]
 (add-to-list 'auto-mode-alist '("\\.http" . restclient-mode))
@@ -646,7 +663,13 @@ nonstopmode' -pdf -f %f"))))
    (push "editable" web-mode-django-control-blocks)
    (push "endeditable" web-mode-django-control-blocks)
    (setq web-mode-django-control-blocks-regexp
-         (regexp-opt web-mode-django-control-blocks t))))
+         (regexp-opt web-mode-django-control-blocks t))
+   (local-set-key
+    (kbd "C-c C-o")
+    (lambda ()
+      (interactive)
+      (let ((sgml-tag-alist html-tag-alist))
+        (sgml-tag))))))
 
 ;;--------------------------------------------------------- [ Custom ]
 (custom-set-faces

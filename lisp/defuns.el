@@ -251,6 +251,11 @@ if active."
   (with-current-buffer (url-retrieve-synchronously url)
     (eval-region (search-forward-regexp "^$") (point-max))))
 
+(defun unix-now ()
+  "Insert number of seconds since 1970-01-01 00:00:00 UTC."
+  (interactive)
+  (insert (string-trim (shell-command-to-string "date +%s"))))
+
 (provide 'defuns)
 
 ;;; defuns.el ends here

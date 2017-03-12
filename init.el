@@ -84,8 +84,7 @@
 
 (setq-default
  indent-tabs-mode             nil  ; Use spaces for indentation
- major-mode             'org-mode  ; Org-mode as default mode
- tab-width                      4) ; Tabs are four spaces wide
+ major-mode             'org-mode) ; Org-mode as default mode
 
 (setq
  auto-revert-verbose          nil  ; Be quiet about reverts
@@ -119,6 +118,7 @@
 (scroll-bar-mode               -1) ; No scroll bar
 (show-paren-mode                1) ; Highlight matching parenthesis
 (tool-bar-mode                 -1) ; No tool bar
+(yas-global-mode)
 
 ;; Add lisp/ and all subdirectories to the load-path
 (let ((default-directory (conf-path "lisp/")))
@@ -212,7 +212,6 @@
 (defvar clean-mode-line-alist
   '((auto-fill-function . "")
     (company-mode . "")
-    (dired-omit-mode . "")
     (elpy-mode . "")
     (emacs-lisp-mode . "Elisp")
     (js2-mode "js2")
@@ -221,7 +220,6 @@
     (python-mode . "Py")
     (rainbow-mode . "")
     (subword-mode . "")
-    (undo-tree-mode "")
     (yas-minor-mode . "")))
 
 (add-hook
@@ -272,13 +270,10 @@
 (add-hook 'prog-mode-hook #'company-mode-on)
 
 ;; -------------------------------------------------------- [ (S)CSS ]
-(require 'css-lookup)
-
 (add-hook
  'css-mode-hook
  (lambda ()
-   (rainbow-mode 1)
-   (yas-minor-mode 1)))
+   (rainbow-mode 1)))
 
 ;; --------------------------------------------------------- [ Dired ]
 (add-hook
@@ -299,18 +294,10 @@
    (define-key dired-mode-map
      (vector 'remap 'dired-goto-file) 'find-file)))
 
-(add-hook
- 'dired-mode-hook
- (lambda ()
-   (declare-function dired-omit-mode "dired-x")
-   ;; Omit "uninteresting" files
-   (dired-omit-mode 1)))
-
 ;; Make file sizes human-readable, and hide time stamps
 (setq-default dired-listing-switches "-alh --time-style=+")
 
 (setq
- dired-omit-verbose nil                ; Be quiet about omitted files
  dired-recursive-copies 'always        ; Don't ask, just copy
  global-auto-revert-non-file-buffers t ; Auto-refresh the file list
  image-dired-show-all-from-dir-max-files 500)
@@ -403,6 +390,9 @@
 (define-eshell-command npm-watch
   "*npm-watch*" "npm run watch")
 
+(define-eshell-command yarn-watch
+  "*yarn-watch*" "yarn run watch")
+
 ;; Workaround for bug #21417, can be removed once it's resolved
 (add-hook
  'eshell-mode-hook
@@ -436,7 +426,11 @@
    (setq-local fill-column 79)
    (local-set-key (kbd "C-j") 'js2-line-break)
    (local-set-key (kbd "RET") 'js2-line-break)
-   (yas-minor-mode 1)))
+   (setq-local
+    prettify-symbols-alist
+    '(("=>" . ?⇒)
+      (">=" . ?≥)
+      ("<=" . ?≤)))))
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
@@ -446,7 +440,8 @@
 ;; ---------------------------------------------------------- [ JSON ]
 (require 'json-mode)
 
-(dolist (filename '(".arcconfig" ".arclint" ".bowerrc" ".eslintrc"))
+(dolist (filename '(".arcconfig" ".arclint" ".babelrc" ".bowerrc"
+                    ".eslintrc"))
   (add-to-list 'auto-mode-alist (cons filename 'json-mode)))
 
 ;; ---------------------------------------------------------- [ Lisp ]
@@ -547,7 +542,8 @@
 (setq
  org-agenda-files (conf-path "org-agenda-files")
  org-agenda-start-on-weekday nil
- org-agenda-include-diary t)
+ org-agenda-include-diary t
+ org-clock-clocked-in-display nil)
 
 ;; Ignore irrelevant holidays
 (setq
@@ -615,7 +611,6 @@ nonstopmode' -pdf -f %f"))))
    (setq-local fill-column 79)
    (setq-local python-fill-docstring-style 'pep-257-nn)
 
-   (yas-minor-mode 1)
    (flycheck-mode 1)
 
    (setq-local

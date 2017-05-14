@@ -25,7 +25,6 @@
 (defvar package-selected-packages
   '(anaconda-mode
     avy
-    cider
     company
     company-anaconda
     company-quickhelp
@@ -34,6 +33,7 @@
     editorconfig
     elpy
     exec-path-from-shell
+    flycheck
     focus
     fuel
     geiser
@@ -42,7 +42,6 @@
     helm
     helm-ag
     helm-projectile
-    ido-vertical-mode
     ivy
     js2-mode
     json-mode
@@ -56,7 +55,6 @@
     norwegian-holidays
     paredit
     projectile
-    rainbow-mode
     rdf-prefix
     restclient
     restclient-test
@@ -69,7 +67,8 @@
     yaml-mode))
 
 (setq package-pinned-packages
-      '((magit . "magit-1")))
+      '((json-mode . "GNU")
+        (magit . "magit-1")))
 
 (package-initialize)
 
@@ -112,7 +111,6 @@
 (global-auto-revert-mode        1) ; Reload files after modification
 (global-prettify-symbols-mode   1) ; Pretty symbols (e.g. lambda => λ)
 (global-subword-mode            1) ; Better editing of camelCasedWords
-(ido-vertical-mode              1) ; Display ido-mode vertically
 (menu-bar-mode                 -1) ; No menu bar
 (prefer-coding-system      'utf-8) ; Always prefer UTF-8
 (scroll-bar-mode               -1) ; No scroll bar
@@ -212,34 +210,19 @@
 (defvar clean-mode-line-alist
   '((auto-fill-function . "")
     (company-mode . "")
+    (editorconfig-mode . "")
     (elpy-mode . "")
     (emacs-lisp-mode . "Elisp")
     (js2-mode "js2")
     (magit-auto-revert-mode . "")
     (paredit-mode . "")
     (python-mode . "Py")
-    (rainbow-mode . "")
     (subword-mode . "")
     (yas-minor-mode . "")))
 
 (add-hook
  'after-change-major-mode-hook
  (lambda () (clean-mode-line clean-mode-line-alist)))
-
-;; ------------------------------------------------------- [ Clojure ]
-(require 'clojure-mode)
-
-;; Extra macro indentation directives
-(define-clojure-indent
-  (defroutes 'defun)
-  (GET 2)
-  (POST 2)
-  (PUT 2)
-  (DELETE 2)
-  (HEAD 2)
-  (ANY 2)
-  (context 2)
-  (render 1))
 
 ;; --------------------------------------------------- [ Color-theme ]
 (load-theme 'leuven t)
@@ -268,12 +251,6 @@
 (setq company-idle-delay 0.1)
 
 (add-hook 'prog-mode-hook #'company-mode-on)
-
-;; -------------------------------------------------------- [ (S)CSS ]
-(add-hook
- 'css-mode-hook
- (lambda ()
-   (rainbow-mode 1)))
 
 ;; --------------------------------------------------------- [ Dired ]
 (add-hook
@@ -453,10 +430,7 @@
 
 (mapc
  (lambda (m) (add-hook m 'setup-lisp))
- '(cider-repl-mode
-   clojure-mode
-   clojurescript-mode
-   emacs-lisp-mode-hook
+ '(emacs-lisp-mode-hook
    geiser-repl-mode-hook
    ielm-mode-hook
    inferior-lisp-mode-hook
@@ -645,6 +619,7 @@ nonstopmode' -pdf -f %f"))))
   (add-to-list 'auto-mode-alist (cons ext 'web-mode)))
 
 (setq
+ web-mode-enable-auto-indentation nil
  web-mode-engines-alist '(("django" . "\\.html"))
  web-mode-enable-auto-pairing nil
  web-mode-attr-indent-offset 2

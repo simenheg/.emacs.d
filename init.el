@@ -39,9 +39,6 @@
     geiser
     gnuplot
     google-translate
-    helm
-    helm-ag
-    helm-projectile
     ivy
     js2-mode
     json-mode
@@ -262,6 +259,9 @@
 
    (local-set-key (kbd "C-c C-w") 'wdired-change-to-wdired-mode)
 
+   ;; -h for human-readable file sizes, -v for natural sort.
+   (setq dired-listing-switches "-alhv --time-style=+")
+
    (define-key dired-mode-map
      (vector 'remap 'end-of-buffer) 'dired-end-of-buffer)
 
@@ -393,6 +393,13 @@
 ;; ----------------------------------------------------------- [ Ivy ]
 (require 'ivy)
 (push '(counsel-M-x . "") ivy-initial-inputs-alist)
+
+(defun counsel-ag-projectile
+    (&optional initial-input initial-directory extra-ag-args
+               ag-prompt)
+  (interactive)
+  (counsel-ag initial-input (projectile-project-root)
+              extra-ag-args ag-prompt))
 
 ;; ---------------------------------------------------- [ JavaScript ]
 (setq inferior-js-program-command "nodejs")
@@ -559,7 +566,8 @@ nonstopmode' -pdf -f %f"))))
 (add-hook
  'projectile-mode-hook
  (lambda ()
-   (define-key projectile-command-map (kbd "s") 'helm-projectile-ag)))
+   (define-key projectile-command-map (kbd "s")
+     'counsel-ag-projectile)))
 
 ;; -------------------------------------------------------- [ Python ]
 
@@ -668,4 +676,5 @@ nonstopmode' -pdf -f %f"))))
  '(magit-log-author ((t (:foreground "firebrick"))))
  '(magit-log-message ((t nil)))
  '(nxml-element-local-name ((t (:background "white smoke" :foreground "SteelBlue" :box (:line-width 1 :color "light gray")))))
+ '(org-document-title ((t (:foreground "black" :weight bold :height 1.2 :family "Sans Serif"))))
  '(slime-repl-inputed-output-face ((t (:foreground "#729fcf"))) t))

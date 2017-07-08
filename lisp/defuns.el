@@ -1,5 +1,9 @@
 ;;; defuns.el --- Miscellaneous utility functions
 
+(defun alphabet ()
+  (interactive)
+  (message "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"))
+
 (defun auto-byte-recompile ()
   "If the current buffer is in emacs-lisp-mode and there already
 exists an .elc file corresponding to the current buffer file,

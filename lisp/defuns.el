@@ -2,7 +2,10 @@
 
 (defun alphabet ()
   (interactive)
-  (message "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"))
+  (message
+   (concat
+    "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z\n"
+    "a b c d e f g h i j k l m n o p q r s t u v w x y z")))
 
 (defun auto-byte-recompile ()
   "If the current buffer is in emacs-lisp-mode and there already
@@ -149,13 +152,12 @@ create a new session."
     (goto-char (match-beginning 0))))
 
 (defun insert-header (title)
-  "Insert a neat, commented header."
+  "Insert a neatly formatted, commented header."
   (interactive "MHeader: ")
   (comment-dwim nil)
-  (let ((offset (+ (length title) 5)))
-    (while (< (+ (current-column) offset) fill-column)
-      (insert "-")))
-  (insert " [ " title " ]"))
+  (let* ((header (concat " [ " title " ]"))
+         (ndashes (- fill-column (current-column) (length header))))
+    (insert (concat (make-string ndashes ?-) header))))
 
 (defun insert-random-string (len)
   "Insert a random alphanumeric ASCII-string of length LEN."

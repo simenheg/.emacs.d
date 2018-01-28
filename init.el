@@ -51,8 +51,10 @@
     nodejs-repl
     norwegian-holidays
     paredit
+    php-mode
     projectile
     rdf-prefix
+    request
     restclient
     restclient-test
     smex
@@ -80,7 +82,7 @@
 
 (setq-default
  indent-tabs-mode             nil  ; Use spaces for indentation
- major-mode             'org-mode) ; Org-mode as default mode
+ major-mode            'text-mode) ; Text mode as default mode
 
 (setq
  auto-revert-verbose          nil  ; Be quiet about reverts
@@ -103,7 +105,6 @@
 (blink-cursor-mode              0) ; No blinking cursor
 (column-number-mode             1) ; Show column number
 (editorconfig-mode              1) ; Respect EditorConfig files
-(electric-quote-mode            1) ; Easier “quote” typing
 (fset 'yes-or-no-p      'y-or-n-p) ; Make "yes/no" prompts "y/n"
 (global-auto-revert-mode        1) ; Reload files after modification
 (global-prettify-symbols-mode   1) ; Pretty symbols (e.g. lambda => λ)
@@ -126,6 +127,7 @@
 (global-set-key (kbd "C-'")     'org-cycle-agenda-files)
 (global-set-key (kbd "C-+")     'dec-next-number)
 (global-set-key (kbd "C-=")     'inc-next-number)
+(global-set-key (kbd "C-M-y")   'counsel-yank-pop)
 (global-set-key (kbd "C-S-k")   'kill-whole-line)
 (global-set-key (kbd "C-\"")    'cycle-quotes)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
@@ -150,8 +152,8 @@
 (global-set-key (kbd "C-x k")   'kill-this-buffer)
 (global-set-key (kbd "C-z")     'bury-buffer)
 (global-set-key (kbd "M-i")     'counsel-imenu)
-(global-set-key (kbd "M-x")     'counsel-M-x)
 (global-set-key (kbd "M-s l")   'sort-lines)
+(global-set-key (kbd "M-x")     'counsel-M-x)
 (global-set-key [C-M-backspace] 'backward-kill-sexp)
 (global-set-key [C-tab]         'tidy-buffer)
 (global-set-key [M-down]        'move-line-down)
@@ -205,15 +207,17 @@
 
 ;; ----------------------------------------------- [ Clean Mode Line ]
 (defvar clean-mode-line-alist
-  '((auto-fill-function . "")
+  '((anaconda-mode . "")
+    (auto-fill-function . "")
     (company-mode . "")
     (editorconfig-mode . "")
+    (eldoc-mode . "")
     (elpy-mode . "")
-    (emacs-lisp-mode . "Elisp")
+    (emacs-lisp-mode . "el")
     (js2-mode "js2")
     (magit-auto-revert-mode . "")
     (paredit-mode . "")
-    (python-mode . "Py")
+    (python-mode . "🐍")
     (subword-mode . "")
     (yas-minor-mode . "")))
 
@@ -226,6 +230,7 @@
 
 ;; --------------------------------------------------- [ Common Lisp ]
 (setq inferior-lisp-program "sbcl")
+(setq slime-contribs '(slime-fancy))
 
 ;; More sensible `loop' indentation
 (setq lisp-loop-forms-indentation   2
@@ -328,8 +333,7 @@
     '(("lambda" . ?λ)
       ("/=" . ?≠)
       ("<=" . ?≤)
-      (">=" . ?≥)))
-   (setq-local fill-column 72)))
+      (">=" . ?≥)))))
 
 (add-hook 'after-save-hook 'auto-byte-recompile)
 
@@ -338,7 +342,7 @@
 
 ;; ----------------------------------------------- [ Eshell commands ]
 (define-eshell-command grunt
-  "*grunt*" "grunt")
+  "*grunt*" "grunt watch")
 
 (define-eshell-command django-server
   "*server*" "./manage.py runserver 0.0.0.0:8000")
@@ -460,7 +464,8 @@
      (add-to-list
       'compilation-error-regexp-alist-alist
       '(love
-        "^Error: Syntax error: \\(.*?\\):\\([0-9]+\\):.*$" 1 2) t))))
+        "^Error: Syntax error: \\(.*?\\):\\([0-9]+\\):.*$" 1 2)
+      t))))
 
 ;; --------------------------------------------------------- [ Magit ]
 (setq magit-last-seen-setup-instructions "1.4.0")

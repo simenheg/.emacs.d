@@ -335,38 +335,12 @@
       ("<=" . ?≤)
       (">=" . ?≥)))))
 
-(add-hook 'after-save-hook 'auto-byte-recompile)
-
 ;; ----------------------------------------------------------- [ ERC ]
 (setq erc-fill-column fill-column)
 
 ;; ----------------------------------------------- [ Eshell commands ]
-(define-eshell-command grunt
-  "*grunt*" "grunt watch")
-
 (define-eshell-command django-server
   "*server*" "./manage.py runserver 0.0.0.0:8000")
-
-(define-eshell-command ember-server
-  "*ember-server*" "ember serve")
-
-(define-eshell-command admin-server
-  "*admin-server*" "ember serve")
-
-(define-eshell-command quiz-server
-  "*quiz-server*" "ember serve")
-
-(define-eshell-command arc-diff
-  "*arc*" "arc diff HEAD^")
-
-(define-eshell-command arc-diff-qw
-  "*arc*" "./arc-diff HEAD^")
-
-(define-eshell-command arc-land
-  "*arc*" "arc land")
-
-(define-eshell-command maildev
-  "*maildev*" "maildev")
 
 (define-eshell-command npm-watch
   "*npm-watch*" "npm run watch")
@@ -406,8 +380,6 @@
               extra-ag-args ag-prompt))
 
 ;; ---------------------------------------------------- [ JavaScript ]
-(setq inferior-js-program-command "nodejs")
-
 (add-hook
  'js2-mode-hook
  (lambda ()
@@ -624,18 +596,29 @@ nonstopmode' -pdf -f %f"))))
 (setq geiser-active-implementations '(guile)
       geiser-repl-query-on-kill-p nil)
 
+;; ----------------------------------------------------------- [ SQL ]
+(setq-default sql-product 'postgres)
+
 ;; ----------------------------------------------------- [ Text mode ]
 (add-hook 'text-mode-hook (lambda () (auto-fill-mode 1)))
 
+;; ----------------------------------------------------- [ Timeclock ]
+(require 'timeclock)
+
+;; Don't ask for a reason when clocking out
+(setq timeclock-get-reason-function nil)
+
+(define-key ctl-x-map "ti" 'timeclock-in)
+(define-key ctl-x-map "to" 'timeclock-out)
+
 ;; ------------------------------------------------------ [ Web mode ]
-(dolist (ext '("\\.html" "\\.hbs" "\\.jinja"))
+(dolist (ext '("\\.html" "\\.jinja"))
   (add-to-list 'auto-mode-alist (cons ext 'web-mode)))
 
 (setq
  web-mode-enable-auto-indentation nil
  web-mode-engines-alist '(("django" . "\\.html"))
  web-mode-enable-auto-pairing nil
- web-mode-attr-indent-offset 2
  web-mode-markup-indent-offset 2)
 
 (add-hook
@@ -668,7 +651,7 @@ nonstopmode' -pdf -f %f"))))
  '(erc-nick-default-face ((t (:weight bold :family "Sans Serif"))))
  '(erc-notice-face ((t (:foreground "SlateBlue" :weight bold :height 0.8))))
  '(erc-timestamp-face ((t (:foreground "pale green" :weight bold))))
- '(flymake-errline ((t (:underline (:color "salmon1" :style wave)))))
+ '(flymake-errline ((t (:underline (:color "salmon1" :style wave)))) t)
  '(geiser-font-lock-repl-prompt ((t (:inherit comint-highlight-prompt))))
  '(git-commit-summary-face ((t (:foreground "#000000"))))
  '(ivy-current-match ((t (:background "#FFF876" :foreground "black"))))

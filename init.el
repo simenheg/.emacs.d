@@ -445,7 +445,7 @@
 (add-hook 'git-commit-mode-hook (lambda () (flyspell-mode 1)))
 
 ;; ---------------------------------------------------------- [ Mail ]
-(require 'private-stuff)
+(require 'private-stuff nil t)
 
 (setq mail-from-style               'angles
       mail-personal-alias-file      (conf-path "mail-aliases")
@@ -513,11 +513,11 @@
 ;; Capture templates
 (setq
  org-capture-templates
- '(("a" "Agenda" entry (file+headline "~/life.org" "Agenda")
+ '(("a" "Agenda" entry (file+headline "~/sync/life.org" "Agenda")
     "** %?" :prepend t)
-   ("b" "Bug" entry (file+headline "~/bugs/bugs.org" "Bugs")
+   ("b" "Bug" entry (file+headline "~/sync/bugs/bugs.org" "Bugs")
     "** TODO %?")
-   ("m" "Music" entry (file+headline "~/music.org" "Music")
+   ("m" "Music" entry (file+headline "~/sync/music.org" "Music")
     "** TODO %?")))
 
 (add-hook
@@ -540,11 +540,8 @@ nonstopmode' -pdf -f %f"))))
 (setq projectile-completion-system 'ivy)
 (setq projectile-mode-line "")
 
-(add-hook
- 'projectile-mode-hook
- (lambda ()
-   (define-key projectile-command-map (kbd "s")
-     'counsel-ag-projectile)))
+(define-key projectile-command-map (kbd "s")
+  'counsel-ag-projectile)
 
 ;; -------------------------------------------------------- [ Python ]
 

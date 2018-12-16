@@ -1,5 +1,7 @@
 ;;; defuns.el --- Miscellaneous utility functions
 
+(eval-when-compile (require 'subr-x))
+
 (defun alphabet ()
   (interactive)
   (message

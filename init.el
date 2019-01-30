@@ -25,9 +25,11 @@
 (defvar package-selected-packages
   '(anaconda-mode
     avy
+    bbdb
     company
     company-anaconda
     company-quickhelp
+    csv-mode
     cycle-quotes
     debbugs
     editorconfig
@@ -57,6 +59,7 @@
     request
     restclient
     restclient-test
+    slime
     smex
     undo-tree
     web-mode
@@ -67,7 +70,8 @@
 
 (setq package-pinned-packages
       '((json-mode . "GNU")
-        (magit . "magit-1")))
+        (magit . "magit-1")
+        (slime . "MELPA")))
 
 (package-initialize)
 
@@ -92,7 +96,7 @@
  disabled-command-function    nil  ; Enable disabled commands
  display-time-24hr-format       t  ; 24 hour time format
  eshell-hist-ignoredups         t  ; Ignore duplicate history
- eshell-history-size         1000  ; Lengthen Eshell history
+ eshell-history-size        10000  ; Lengthen Eshell history
  gc-cons-threshold       20000000  ; Run GC only every 20 MB
  history-delete-duplicates      t  ; Delete duplicate history entries
  inhibit-startup-screen         t  ; No startup screen
@@ -114,7 +118,7 @@
 (scroll-bar-mode               -1) ; No scroll bar
 (show-paren-mode                1) ; Highlight matching parenthesis
 (tool-bar-mode                 -1) ; No tool bar
-(yas-global-mode)
+(yas-global-mode                1) ; YASnippet everywhere
 
 ;; Add lisp/ and all subdirectories to the load-path
 (let ((default-directory (conf-path "lisp/")))
@@ -165,6 +169,12 @@
 ;; ----------------------------------------------------------- [ Avy ]
 (setq avy-background t)
 
+;; ---------------------------------------------------------- [ BBDB ]
+(setq bbdb-file "~/sync/bbdb")
+(setq bbdb-phone-style nil)
+(setq bbdb-mua-pop-up nil)
+(setq bbdb-completion-display-record nil)
+
 ;; -------------------------------------------------------- [ BibTeX ]
 (setq-default bibtex-dialect 'biblatex)
 
@@ -210,6 +220,7 @@
   '((anaconda-mode . "")
     (auto-fill-function . "")
     (company-mode . "")
+    (counsel-mode . "")
     (editorconfig-mode . "")
     (eldoc-mode . "")
     (elpy-mode . "")
@@ -230,21 +241,25 @@
 
 ;; --------------------------------------------------- [ Common Lisp ]
 (setq inferior-lisp-program "sbcl")
-(setq slime-contribs '(slime-fancy))
+(setq slime-contribs '(slime-fancy slime-repl))
+(setq slime-repl-history-size 1000)
 
 ;; More sensible `loop' indentation
 (setq lisp-loop-forms-indentation   2
       lisp-simple-loop-indentation  2
       lisp-loop-keyword-indentation 6)
 
-;; Stop SLIME's REPL from grabbing DEL, which is annoying when
-;; backspacing over a ')'
 (add-hook
  'slime-repl-mode-hook
  (lambda ()
    (defvar slime-repl-mode-map)
+   ;; Stop SLIME's REPL from grabbing DEL, which is annoying when
+   ;; backspacing over a ')'
    (define-key slime-repl-mode-map
-     (read-kbd-macro paredit-backward-delete-key) nil)))
+     (read-kbd-macro paredit-backward-delete-key) nil)
+
+   ;; Font Lock mode messes with SLIME's REPL for some reason.
+   (font-lock-mode -1)))
 
 ;; ------------------------------------------------------- [ Company ]
 (require 'company)
@@ -253,6 +268,15 @@
 (setq company-idle-delay 0.1)
 
 (add-hook 'prog-mode-hook #'company-mode-on)
+
+
+;; ----------------------------------------------------------- [ CSV ]
+(add-hook
+ 'csv-mode-hook
+ (lambda ()
+   (csv-align-fields nil (point-min) (point-max))
+   (hl-line-mode)
+   (auto-fill-mode 0)))
 
 ;; --------------------------------------------------------- [ Dired ]
 (add-hook
@@ -265,7 +289,10 @@
    (local-set-key (kbd "C-c C-w") 'wdired-change-to-wdired-mode)
 
    ;; -h for human-readable file sizes, -v for natural sort.
-   (setq dired-listing-switches "-alhv --time-style=+")
+   (setq dired-listing-switches "-alhv")
+
+   (define-key dired-mode-map
+     (vector 'remap 'dired-do-print) 'previous-line)
 
    (define-key dired-mode-map
      (vector 'remap 'end-of-buffer) 'dired-end-of-buffer)
@@ -514,7 +541,7 @@
 (setq
  org-capture-templates
  '(("a" "Agenda" entry (file+headline "~/sync/life.org" "Agenda")
-    "** %?" :prepend t)
+    "** %?\n" :prepend t)
    ("b" "Bug" entry (file+headline "~/sync/bugs/bugs.org" "Bugs")
     "** TODO %?")
    ("m" "Music" entry (file+headline "~/sync/music.org" "Music")
@@ -524,8 +551,8 @@
  'org-mode-hook
  (lambda ()
    (require 'org-bibtex)
-   ;; Use Evince for PDF previews
    (defvar org-file-apps)
+   ;; Use Evince for PDF previews
    (add-to-list 'org-file-apps '("pdf" . "evince %s"))
    (defvar org-latex-pdf-process
      '("latexmk -pdflatex='pdflatex -shell-escape -interaction \

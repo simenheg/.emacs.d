@@ -567,6 +567,9 @@ nonstopmode' -pdf -f %f"))))
 (setq projectile-completion-system 'ivy)
 (setq projectile-mode-line "")
 
+(define-key projectile-mode-map (kbd "C-c p")
+  'projectile-command-map)
+
 (define-key projectile-command-map (kbd "s")
   'counsel-ag-projectile)
 

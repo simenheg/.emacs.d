@@ -1,8 +1,10 @@
 ;;; defuns.el --- Miscellaneous utility functions
 
+(require 'seq)
 (eval-when-compile (require 'subr-x))
 
 (defun alphabet ()
+  "Display the alphabet."
   (interactive)
   (message
    (concat
@@ -115,7 +117,7 @@ commented out before it's copied."
 
 (defun fmt (symbols)
   "Insert '(format t \"x1: ~a, x2: ~a, ..., xn: ~a~%)' for every
-  x separated by a space in `symbols'."
+x separated by a space in `symbols'."
   (interactive "MPrint symbols: ")
   (insert
    (format
@@ -161,10 +163,23 @@ create a new session."
          (ndashes (- fill-column (current-column) (length header))))
     (insert (concat (make-string ndashes ?-) header))))
 
+(defun insert-random-password (len)
+  "Insert a password-friendly random string of length LEN."
+  (interactive "NLength: ")
+  (insert
+   (random-string
+    "!#%+23456789:=?@ABCDEFGHJKLMNPRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+    len)))
+
 (defun insert-random-string (len)
   "Insert a random alphanumeric ASCII-string of length LEN."
   (interactive "NLength: ")
-  (insert (random-string (or len 32))))
+  (insert
+   (random-string
+    (append (number-sequence ?0 ?9)
+            (number-sequence ?a ?z)
+            (number-sequence ?A ?Z))
+    len)))
 
 (defun kill-region-or-backward-kill-sexp (&optional arg region)
   "`kill-region' if the region is active, otherwise
@@ -181,6 +196,13 @@ create a new session."
    (format "alias %s \"%s <%s>\"\n" alias full-name email-address)
    nil
    mail-personal-alias-file))
+
+(defun make-list* (n fun &rest args)
+  "Call FUN with ARGS N times and return a list of the results."
+  (let ((res '()))
+    (dotimes (_ n)
+      (push (apply fun args) res))
+    res))
 
 (defun message-insert-citation-line ()
   "Insert a simple citation line."
@@ -209,23 +231,9 @@ Point stays at the same position in the original line."
     (forward-line -2)
     (move-to-column col)))
 
-(defun random-char ()
-  "Return a random alphanumeric ASCII-character."
-  (random-elt
-   (append (number-sequence ?0 ?9)
-           (number-sequence ?a ?z)
-           (number-sequence ?A ?Z))))
-
-(defun random-elt (list)
-  "Return a random element from the list LIST."
-  (nth (random (length list)) list))
-
-(defun random-string (len)
-  "Return a random alphanumeric ASCII-string of length LEN."
-  (let ((chars '()))
-    (dotimes (_ len)
-      (push (random-char) chars))
-    (apply #'string chars)))
+(defun random-string (chars len)
+  "Return a string of LEN random characters from CHARS."
+  (apply #'string (make-list* len #'seq-random-elt chars)))
 
 (defun revert-buffer-noconfirm ()
   "Like `revert-buffer', but don't ask for confirmation."

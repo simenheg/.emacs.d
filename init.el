@@ -501,12 +501,14 @@
       (apply
        'concat rmail-ignored-headers
        (mapcar (lambda (s) (concat "\\|^" s ":"))
-               '("accept-language"
+               '("IronPort-PHdr"
+                 "accept-language"
                  "authentication-results"
                  "content-disposition"
                  "content-language"
                  "content-type"
                  "in-reply-to"
+                 "msip_labels"
                  "received-spf"
                  "thread-index"))))
 

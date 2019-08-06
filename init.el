@@ -354,13 +354,7 @@
 (add-hook
  'emacs-lisp-mode-hook
  (lambda ()
-   (setq sentence-end-double-space t)
-   (setq-local
-    prettify-symbols-alist
-    '(("lambda" . ?λ)
-      ("/=" . ?≠)
-      ("<=" . ?≤)
-      (">=" . ?≥)))))
+   (setq sentence-end-double-space t)))
 
 ;; ----------------------------------------------------------- [ ERC ]
 (setq erc-fill-column fill-column)
@@ -436,7 +430,13 @@
 
 (defun setup-lisp ()
   (auto-fill-mode 1)
-  (paredit-mode 1))
+  (paredit-mode 1)
+  (setq-local
+   prettify-symbols-alist
+   '(("lambda" . ?λ)
+     ("/=" . ?≠)
+     ("<=" . ?≤)
+     (">=" . ?≥))))
 
 (mapc
  (lambda (m) (add-hook m 'setup-lisp))

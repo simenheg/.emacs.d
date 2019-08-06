@@ -492,7 +492,8 @@
    (define-key message-mode-map [remap next-line]
      'mail-abbrev-next-line)
    (define-key message-mode-map [remap end-of-buffer]
-     'mail-abbrev-end-of-buffer)))
+     'mail-abbrev-end-of-buffer)
+   (flyspell-mode 1)))
 
 (setq rmail-mime-attachment-dirs-alist '((".*" "~/tmp" "~" "/tmp")))
 

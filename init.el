@@ -522,6 +522,9 @@
  (lambda ()
    (local-set-key (kbd "C-c C-e") #'markdown-export-and-preview)))
 
+;; ------------------------------------------------------ [ Midnight ]
+(midnight-mode 1)
+
 ;; -------------------------------------------------------- [ Octave ]
 (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
 

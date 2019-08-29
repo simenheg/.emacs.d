@@ -400,6 +400,18 @@
   (counsel-ag initial-input (projectile-project-root)
               extra-ag-args ag-prompt))
 
+;; ---------------------------------------------------------- [ Java ]
+(add-hook
+ 'java-mode
+ (lambda ()
+   (setq-local
+    c-offsets-alist
+    (append
+     '((arglist-intro . +)
+       (arglist-cont . 0)
+       (arglist-close . 0))
+     c-offsets-alist))))
+
 ;; ---------------------------------------------------- [ JavaScript ]
 (add-hook
  'js2-mode-hook

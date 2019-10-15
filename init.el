@@ -159,7 +159,6 @@
 (global-set-key (kbd "M-s l")   'sort-lines)
 (global-set-key (kbd "M-x")     'counsel-M-x)
 (global-set-key [C-M-backspace] 'backward-kill-sexp)
-(global-set-key [C-tab]         'tidy-buffer)
 (global-set-key [M-down]        'move-line-down)
 (global-set-key [M-up]          'move-line-up)
 

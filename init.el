@@ -427,8 +427,6 @@
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
 
-(setq js2-strict-trailing-comma-warning nil)
-
 ;; ---------------------------------------------------------- [ JSON ]
 (require 'json-mode)
 

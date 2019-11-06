@@ -648,6 +648,11 @@ nonstopmode' -pdf -f %f"))))
 (define-key ctl-x-map "ti" 'timeclock-in)
 (define-key ctl-x-map "to" 'timeclock-out)
 
+;; ------------------------------------------------------------ [ VC ]
+(remove-hook 'log-edit-hook #'log-edit-insert-message-template)
+(add-hook 'log-edit-mode-hook (lambda () (flyspell-mode 1)))
+(add-hook 'log-view-mode-hook (lambda () (hl-line-mode 1)))
+
 ;; ------------------------------------------------------ [ Web mode ]
 (dolist (ext '("\\.html" "\\.jinja"))
   (add-to-list 'auto-mode-alist (cons ext 'web-mode)))

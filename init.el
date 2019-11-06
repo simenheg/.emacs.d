@@ -368,11 +368,6 @@
 (define-eshell-command yarn-watch
   "*yarn-watch*" "yarn run watch")
 
-;; Workaround for bug #21417, can be removed once it's resolved
-(add-hook
- 'eshell-mode-hook
- (lambda () (setq-local paragraph-separate "workaround-for-bug")))
-
 ;; -------------------------------------------------------- [ Factor ]
 (setq fuel-factor-root-dir "~/src/factor")
 (add-hook 'factor-mode-hook (lambda () (setq-local fill-column 64)))

@@ -268,14 +268,12 @@
 
 (add-hook 'prog-mode-hook #'company-mode-on)
 
-
 ;; ----------------------------------------------------------- [ CSV ]
 (add-hook
  'csv-mode-hook
  (lambda ()
-   (csv-align-fields nil (point-min) (point-max))
-   (hl-line-mode)
-   (auto-fill-mode 0)))
+   (csv-align-mode 1)
+   (hl-line-mode)))
 
 ;; --------------------------------------------------------- [ Dired ]
 (add-hook

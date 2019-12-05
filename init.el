@@ -258,7 +258,8 @@
      (read-kbd-macro paredit-backward-delete-key) nil)
 
    ;; Font Lock mode messes with SLIME's REPL for some reason.
-   (font-lock-mode -1)))
+   (font-lock-mode -1)
+   (auto-fill-mode -1)))
 
 ;; ------------------------------------------------------- [ Company ]
 (require 'company)

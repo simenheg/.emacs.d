@@ -240,10 +240,6 @@ Point stays at the same position in the original line."
   (interactive)
   (revert-buffer nil t))
 
-(defadvice split-window-right (after balance-windows activate)
-  "Workaround for unbalanced splits."
-  (balance-windows))
-
 (defun tidy-buffer ()
   "Ident, untabify and unwhitespacify current buffer, or region
 if active."

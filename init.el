@@ -144,6 +144,7 @@
 (global-set-key (kbd "C-c e")   'mc/edit-lines)
 (global-set-key (kbd "C-c f")   'find-grep)
 (global-set-key (kbd "C-c l")   'mc/mark-all-like-this)
+(global-set-key (kbd "C-c m")   'gnus)
 (global-set-key (kbd "C-c n")   'mc/mark-next-like-this)
 (global-set-key (kbd "C-c r")   'rename-buffer)
 (global-set-key (kbd "C-c t")   'google-translate-at-point)

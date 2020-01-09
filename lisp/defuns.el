@@ -51,6 +51,14 @@ point to beginning of line."
       (when (eq mode major-mode)
         (setq mode-name mode-str)))))
 
+(defun copy-buffer-file-name ()
+  "Put the current buffer file name in the kill ring."
+  (interactive)
+  (let ((name (buffer-file-name)))
+    (when name
+      (kill-new name))
+    (message (or name "Buffer is not visiting a file"))))
+
 (defun dec-next-number (&optional arg)
   "Decrease first number found after point (ala Vim's C-x)."
   (interactive "p")

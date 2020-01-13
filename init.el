@@ -73,8 +73,6 @@
         (magit . "magit-1")
         (slime . "MELPA")))
 
-(package-initialize)
-
 (unless (file-exists-p package-user-dir)
   (package-refresh-contents))
 

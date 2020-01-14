@@ -411,12 +411,7 @@
  (lambda ()
    (setq-local fill-column 79)
    (local-set-key (kbd "C-j") 'js2-line-break)
-   (local-set-key (kbd "RET") 'js2-line-break)
-   (setq-local
-    prettify-symbols-alist
-    '(("=>" . ?⇒)
-      (">=" . ?≥)
-      ("<=" . ?≤)))))
+   (local-set-key (kbd "RET") 'js2-line-break)))
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))

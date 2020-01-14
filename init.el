@@ -226,6 +226,7 @@
     (js2-mode "js2")
     (magit-auto-revert-mode . "")
     (paredit-mode . "")
+    (projectile-mode . "")
     (python-mode . "🐍")
     (subword-mode . "")
     (yas-minor-mode . "")))
@@ -573,7 +574,6 @@ nonstopmode' -pdf -f %f"))))
 (projectile-global-mode)
 
 (setq projectile-completion-system 'ivy)
-(setq projectile-mode-line "")
 
 (define-key projectile-mode-map (kbd "C-c p")
   'projectile-command-map)

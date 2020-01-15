@@ -1,10 +1,6 @@
 ;; init.el --- Personal Emacs configurations
 ;; Author: Simen Heggestøyl <simenheg@gmail.com>
 
-(defun conf-path (path)
-  "Return the absolute path of config file/directory PATH."
-  (expand-file-name (concat user-emacs-directory path)))
-
 (setq
  package-archives
  `(("GNU" . "http://elpa.gnu.org/packages/")
@@ -12,7 +8,7 @@
    ("MELPA Stable" . "http://stable.melpa.org/packages/")
    ("MELPA" . "http://melpa.org/packages/")
    ("magit-1" . "http://magit.vc/elpa/v1/packages/")
-   ("local" . ,(conf-path "lisp/packages/"))))
+   ("local" . ,(locate-user-emacs-file "lisp/packages/"))))
 
 (setq
  package-archive-priorities
@@ -119,7 +115,7 @@
 (yas-global-mode                1) ; YASnippet everywhere
 
 ;; Add lisp/ and all subdirectories to the load-path
-(let ((default-directory (conf-path "lisp/")))
+(let ((default-directory (locate-user-emacs-file "lisp/")))
   (normal-top-level-add-to-load-path '("."))
   (normal-top-level-add-subdirs-to-load-path))
 
@@ -333,7 +329,7 @@
 (electric-pair-mode 1)
 
 ;; Put #autosave# and backup~ files into own directory
-(let ((autosave-directory (conf-path "autosaves/")))
+(let ((autosave-directory (locate-user-emacs-file "autosaves/")))
   (setq backup-directory-alist `((".*" . ,autosave-directory)))
   (setq auto-save-file-name-transforms
         `((".*" ,autosave-directory t))))
@@ -473,8 +469,6 @@
 (require 'private-stuff nil t)
 
 (setq mail-from-style               'angles
-      mail-personal-alias-file      (conf-path "mail-aliases")
-      message-auto-save-directory   (conf-path "mail-drafts")
       rmail-delete-after-output     t
       rmail-file-name               "~/mail/inbox"
       rmail-default-file            "~/mail/archive"
@@ -529,7 +523,7 @@
 ;; ----------------------------------------------------------- [ Org ]
 ;; Org agenda
 (setq
- org-agenda-files (conf-path "org-agenda-files")
+ org-agenda-files (locate-user-emacs-file "org-agenda-files")
  org-agenda-start-on-weekday nil
  org-agenda-include-diary t
  org-clock-clocked-in-display nil)

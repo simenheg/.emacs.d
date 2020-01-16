@@ -297,9 +297,6 @@
    (define-key dired-mode-map
      (vector 'remap 'dired-goto-file) 'find-file)))
 
-;; Make file sizes human-readable, and hide time stamps
-(setq-default dired-listing-switches "-alh --time-style=+")
-
 (setq
  dired-recursive-copies 'always        ; Don't ask, just copy
  global-auto-revert-non-file-buffers t ; Auto-refresh the file list

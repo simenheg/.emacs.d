@@ -107,11 +107,8 @@
 (global-auto-revert-mode        1) ; Reload files after modification
 (global-prettify-symbols-mode   1) ; Pretty symbols (e.g. lambda => λ)
 (global-subword-mode            1) ; Better editing of camelCasedWords
-(menu-bar-mode                 -1) ; No menu bar
 (prefer-coding-system      'utf-8) ; Always prefer UTF-8
-(scroll-bar-mode               -1) ; No scroll bar
 (show-paren-mode                1) ; Highlight matching parenthesis
-(tool-bar-mode                 -1) ; No tool bar
 (yas-global-mode                1) ; YASnippet everywhere
 
 ;; Add lisp/ and all subdirectories to the load-path

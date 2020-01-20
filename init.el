@@ -542,7 +542,6 @@
 (add-hook
  'org-mode-hook
  (lambda ()
-   (require 'org-bibtex)
    (defvar org-file-apps)
    ;; Use Evince for PDF previews
    (add-to-list 'org-file-apps '("pdf" . "evince %s"))

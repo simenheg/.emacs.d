@@ -373,8 +373,8 @@
       google-translate-default-target-language "en")
 
 ;; ----------------------------------------------------------- [ Ivy ]
-(require 'ivy)
-(push '(counsel-M-x . "") ivy-initial-inputs-alist)
+(require 'counsel)
+(ivy-configure 'counsel-M-x :initial-input "")
 
 (defun counsel-ag-projectile
     (&optional initial-input initial-directory extra-ag-args

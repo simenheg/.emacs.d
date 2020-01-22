@@ -28,16 +28,6 @@ point to beginning of line."
     (when (= prev (point))
       (beginning-of-line))))
 
-;; Find the header or source file corresponding to this file.
-(defalias 'c-find-corresponding-file 'ff-find-other-file)
-
-(defun c-include-header (header)
-  "Append a file to the list of included header files."
-  (interactive "MHeader name: ")
-  (save-excursion
-    (goto-char (point-min))
-    (insert "#include <" header ".h>\n")))
-
 ;; Thanks to Mickey Petersen at masteringemacs.org
 (defun clean-mode-line (alist)
   (interactive)

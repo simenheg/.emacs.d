@@ -174,9 +174,7 @@
  'c-mode-common-hook
  (lambda ()
    (auto-fill-mode 1)
-
-   (local-set-key (kbd "C-c i") 'c-include-header)
-   (local-set-key (kbd "C-c h") 'c-find-corresponding-file)
+   (local-set-key (kbd "C-c h") 'ff-find-other-file)
 
    ;; Try to create a sensible compilation string when no Makefile is
    ;; found

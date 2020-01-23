@@ -57,6 +57,7 @@
     restclient-test
     slime
     smex
+    sql-indent
     undo-tree
     web-mode
     wgrep

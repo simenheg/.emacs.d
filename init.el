@@ -1,6 +1,8 @@
 ;; init.el --- Personal Emacs configurations
 ;; Author: Simen Heggestøyl <simenheg@gmail.com>
 
+(require 'package)
+
 (setq
  package-archives
  `(("GNU" . "http://elpa.gnu.org/packages/")
@@ -18,52 +20,53 @@
    ("marmalade" . 2)
    ("MELPA" . 1)))
 
-(defvar package-selected-packages
-  '(anaconda-mode
-    avy
-    bbdb
-    company
-    company-anaconda
-    company-quickhelp
-    csv-mode
-    cycle-quotes
-    debbugs
-    editorconfig
-    elpy
-    exec-path-from-shell
-    flycheck
-    focus
-    fuel
-    geiser
-    gnuplot
-    google-translate
-    ivy
-    js2-mode
-    json-mode
-    know-your-http-well
-    lorem-ipsum
-    lua-mode
-    magit
-    markdown-mode
-    multiple-cursors
-    nodejs-repl
-    norwegian-holidays
-    paredit
-    php-mode
-    projectile
-    rdf-prefix
-    request
-    restclient
-    restclient-test
-    slime
-    smex
-    sql-indent
-    undo-tree
-    web-mode
-    wgrep
-    wgrep-ag
-    xref-js2
-    yaml-mode))
+(setq
+ package-selected-packages
+ '(anaconda-mode
+   avy
+   bbdb
+   company
+   company-anaconda
+   company-quickhelp
+   csv-mode
+   cycle-quotes
+   debbugs
+   editorconfig
+   elpy
+   exec-path-from-shell
+   flycheck
+   focus
+   fuel
+   geiser
+   gnuplot
+   google-translate
+   ivy
+   js2-mode
+   json-mode
+   know-your-http-well
+   lorem-ipsum
+   lua-mode
+   magit
+   markdown-mode
+   multiple-cursors
+   nodejs-repl
+   norwegian-holidays
+   paredit
+   php-mode
+   projectile
+   rdf-prefix
+   request
+   restclient
+   restclient-test
+   slime
+   smex
+   sql-indent
+   undo-tree
+   web-mode
+   wgrep
+   wgrep-ag
+   xref-js2
+   yaml-mode))
 
 (setq package-pinned-packages
       '((json-mode . "GNU")

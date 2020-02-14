@@ -1,0 +1,11 @@
+anaconda-mode/
+auto-save-list/
+autosaves/
+elpa/
+eshell/
+lisp/private-stuff.el
+network-security.data
+org-agenda-files
+projectile-bookmarks.eld
+session.*
+url/cookies

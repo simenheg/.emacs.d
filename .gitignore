@@ -1,11 +1,14 @@
 anaconda-mode/
 auto-save-list/
 autosaves/
+bookmarks
 elpa/
 eshell/
 lisp/private-stuff.el
+mail-drafts/
 network-security.data
 org-agenda-files
 projectile-bookmarks.eld
 session.*
+tramp
 url/cookies

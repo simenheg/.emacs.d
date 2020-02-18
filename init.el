@@ -588,6 +588,8 @@ nonstopmode' -pdf -f %f"))))
    (defvar python-fill-docstring-style)
    (setq-local fill-column 79)
    (setq-local python-fill-docstring-style 'pep-257-nn)
+   (setq-local anaconda-mode-installation-directory
+               (locate-user-emacs-file "anaconda-mode"))
 
    (flycheck-mode 1)
 

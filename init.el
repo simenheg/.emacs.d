@@ -623,6 +623,10 @@ nonstopmode' -pdf -f %f"))))
 ;; ----------------------------------------------------------- [ SQL ]
 (setq-default sql-product 'postgres)
 
+;; ----------------------------------------------------- [ Terraform ]
+(require 'terraform-mode)
+(add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
+
 ;; ----------------------------------------------------- [ Text mode ]
 (add-hook 'text-mode-hook (lambda () (auto-fill-mode 1)))
 

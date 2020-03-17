@@ -25,12 +25,14 @@
  '(anaconda-mode
    avy
    bbdb
+   blacken
    company
    company-anaconda
    company-quickhelp
    csv-mode
    cycle-quotes
    debbugs
+   dockerfile-mode
    editorconfig
    elpy
    exec-path-from-shell
@@ -61,6 +63,7 @@
    slime
    smex
    sql-indent
+   terraform-mode
    undo-tree
    web-mode
    wgrep

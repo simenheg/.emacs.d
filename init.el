@@ -467,14 +467,6 @@
 ;; ---------------------------------------------------------- [ Mail ]
 (require 'private-stuff nil t)
 
-(setq mail-from-style               'angles
-      rmail-delete-after-output     t
-      rmail-file-name               "~/mail/inbox"
-      rmail-default-file            "~/mail/archive"
-      rmail-movemail-variant-in-use 'mailutils
-      smtpmail-smtp-service         587
-      gnutls-min-prime-bits         nil)
-
 ;; Expand mail-aliases on `next-line' and `end-of-buffer'
 (add-hook
  'message-mode-hook

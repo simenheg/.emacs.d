@@ -549,6 +549,16 @@ nonstopmode' -pdf -f %f"))))
 ;; ------------------------------------------------------ [ Packages ]
 (setq package-menu-hide-low-priority t)
 
+;; ------------------------------------------------------- [ Parquet ]
+(define-derived-mode parquet-mode csv-mode "Parquet"
+  (call-process-region (point-min) (point-max) "parq2csv" t t)
+  (goto-char (point-min))
+  (csv-align-fields nil (point-min) (point-max))
+  (read-only-mode 1)
+  (set-buffer-modified-p nil))
+(add-to-list 'auto-mode-alist '("\\.parq$" . parquet-mode))
+(add-to-list 'auto-mode-alist '("\\.parquet$" . parquet-mode))
+
 ;; ---------------------------------------------------- [ Projectile ]
 (projectile-global-mode)
 

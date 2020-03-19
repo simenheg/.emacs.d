@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+
+import sys
+from io import BytesIO
+
+import pandas as pd
+
+data = BytesIO(sys.stdin.buffer.read())
+csv_data = pd.read_parquet(data).to_csv()
+print(csv_data)

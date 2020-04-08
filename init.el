@@ -22,21 +22,18 @@
 
 (setq
  package-selected-packages
- '(anaconda-mode
-   avy
+ '(avy
    bbdb
    blacken
    company
-   company-anaconda
    company-quickhelp
    csv-mode
    cycle-quotes
    debbugs
    dockerfile-mode
    editorconfig
-   elpy
+   eglot
    exec-path-from-shell
-   flycheck
    focus
    fuel
    geiser
@@ -56,6 +53,7 @@
    paredit
    php-mode
    projectile
+   pyvenv
    rdf-prefix
    request
    restclient
@@ -69,7 +67,8 @@
    wgrep
    wgrep-ag
    xref-js2
-   yaml-mode))
+   yaml-mode
+   yasnippet))
 
 (setq package-pinned-packages
       '((json-mode . "GNU")
@@ -129,6 +128,7 @@
 (global-set-key (kbd "C-'")     'org-cycle-agenda-files)
 (global-set-key (kbd "C-+")     'dec-next-number)
 (global-set-key (kbd "C-=")     'inc-next-number)
+(global-set-key (kbd "C-?")     'eglot-help-at-point)
 (global-set-key (kbd "C-M-y")   'counsel-yank-pop)
 (global-set-key (kbd "C-S-k")   'kill-whole-line)
 (global-set-key (kbd "C-\"")    'cycle-quotes)
@@ -213,14 +213,13 @@
 
 ;; ----------------------------------------------- [ Clean Mode Line ]
 (defvar clean-mode-line-alist
-  '((anaconda-mode . "")
-    (auto-fill-function . "")
+  '((auto-fill-function . "")
     (company-mode . "")
     (counsel-mode . "")
     (editorconfig-mode . "")
     (eldoc-mode . "")
-    (elpy-mode . "")
     (emacs-lisp-mode . "el")
+    (flymake-mode . "")
     (js2-mode "js2")
     (magit-auto-revert-mode . "")
     (paredit-mode . "")
@@ -310,6 +309,16 @@
 
 (setq doc-view-continuous t) ; Smooth document viewing
 
+;; --------------------------------------------------------- [ Eglot ]
+(require 'eglot)
+
+(add-hook
+ 'eglot--managed-mode-hook
+ (lambda ()
+   (setq mode-line-misc-info nil)))
+
+(push :documentHighlightProvider eglot-ignored-server-capabilites)
+
 ;; --------------------------------------------------------- [ Emacs ]
 ;; Set EDITOR environment variable
 (setenv "EDITOR" "emacs -Q")
@@ -320,6 +329,8 @@
 
 ;; Don't bother to ask unless the file *really* is large (100 MB+)
 (setq large-file-warning-threshold 100000000)
+
+(setq max-mini-window-height 0.2)
 
 ;; Set current buffer as the window name
 (setq-default frame-title-format (list "%b %f"))
@@ -367,8 +378,13 @@
 (add-hook 'factor-mode-hook (lambda () (setq-local fill-column 64)))
 
 ;; ------------------------------------------------------- [ Flymake ]
-(setq help-at-pt-display-when-idle t ; Activate echoed help messages
-      help-at-pt-set-timer        0) ; Echo help instantly
+(require 'flymake)
+
+(define-key flymake-mode-map (kbd "M-g M-n")
+  'flymake-goto-next-error)
+
+(define-key flymake-mode-map (kbd "M-g M-p")
+  'flymake-goto-prev-error)
 
 ;; ---------------------------------------------- [ Google Translate ]
 (autoload 'google-translate-at-point "google-translate" nil t)
@@ -571,42 +587,18 @@ nonstopmode' -pdf -f %f"))))
   'counsel-ag-projectile)
 
 ;; -------------------------------------------------------- [ Python ]
-
-(eval-after-load "company"
-  '(add-to-list 'company-backends 'company-anaconda))
-
-(add-hook 'python-mode-hook 'anaconda-mode)
-(add-hook 'python-mode-hook 'anaconda-eldoc-mode)
+(add-hook 'python-mode-hook 'eglot-ensure)
 
 (add-hook
  'python-mode-hook
  (lambda ()
+   (setq-local fill-column 79)
+   (setq-local python-fill-docstring-style 'pep-257-nn)
    (setq-local
     prettify-symbols-alist
     '(("!=" . ?≠)
       ("<=" . ?≤)
       (">=" . ?≥)))))
-
-(add-hook
- 'anaconda-mode-hook
- (lambda ()
-   (defvar python-fill-docstring-style)
-   (setq-local fill-column 79)
-   (setq-local python-fill-docstring-style 'pep-257-nn)
-   (setq-local anaconda-mode-installation-directory
-               (locate-user-emacs-file "anaconda-mode"))
-
-   (flycheck-mode 1)
-
-   (setq-local
-    prettify-symbols-alist
-    '(("!=" . ?≠)
-      ("<=" . ?≤)
-      (">=" . ?≥)))
-
-   (require 'elpy)
-   (declare-function elpy-test-pytest-runner "elpy")
-   (local-set-key (kbd "C-c C-t") #'elpy-test-pytest-runner)))
 
 ;; --------------------------------------------------- [ REST Client ]
 (add-to-list 'auto-mode-alist '("\\.http" . restclient-mode))

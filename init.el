@@ -73,8 +73,7 @@
 
 (setq package-pinned-packages
       '((json-mode . "GNU")
-        (magit . "magit-1")
-        (slime . "MELPA")))
+        (magit . "magit-1")))
 
 (unless (file-exists-p package-user-dir)
   (package-refresh-contents))

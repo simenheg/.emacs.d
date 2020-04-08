@@ -4,6 +4,7 @@ autosaves/
 bookmarks
 elpa/
 eshell/
+history
 lisp/private-stuff.el
 mail-drafts/
 network-security.data

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: d
+# key: d
+# --
+def $1(`(when (python-info-current-defun) "self")`$2):
+    $3

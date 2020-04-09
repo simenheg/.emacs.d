@@ -434,6 +434,12 @@
                     ".eslintrc"))
   (add-to-list 'auto-mode-alist (cons filename 'json-mode)))
 
+;; --------------------------------------------------------- [ LaTeX ]
+(require 'tex-mode)
+
+(setq tex--prettify-symbols-alist
+      (assoc-delete-all "\\newline" tex--prettify-symbols-alist))
+
 ;; ---------------------------------------------------------- [ Lisp ]
 (autoload 'let-fix "autolet" "Automatic let-form fixer" t)
 

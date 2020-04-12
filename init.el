@@ -55,7 +55,6 @@
    projectile
    pyvenv
    rdf-prefix
-   request
    restclient
    restclient-test
    slime

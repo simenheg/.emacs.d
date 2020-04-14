@@ -366,8 +366,14 @@
 (define-eshell-command django-server
   "*server*" "./manage.py runserver 0.0.0.0:8000")
 
+(define-eshell-command npm-serve
+  "*npm-serve*" "npm run serve")
+
 (define-eshell-command npm-watch
   "*npm-watch*" "npm run watch")
+
+(define-eshell-command simple-http-server
+  "*simple-http-server*" "python3 -m http.server")
 
 (define-eshell-command yarn-watch
   "*yarn-watch*" "yarn run watch")

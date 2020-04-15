@@ -649,6 +649,9 @@ nonstopmode' -pdf -f %f"))))
 (add-hook 'log-edit-mode-hook (lambda () (flyspell-mode 1)))
 (add-hook 'log-view-mode-hook (lambda () (hl-line-mode 1)))
 
+;; ----------------------------------------------------------- [ Vue ]
+(add-to-list 'auto-mode-alist '("\\.vue\\'" . mhtml-mode))
+
 ;; ------------------------------------------------------ [ Web mode ]
 (dolist (ext '("\\.html" "\\.jinja"))
   (add-to-list 'auto-mode-alist (cons ext 'web-mode)))

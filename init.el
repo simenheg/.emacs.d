@@ -269,7 +269,8 @@
 (add-hook
  'csv-mode-hook
  (lambda ()
-   (csv-align-mode 1)
+   (declare-function csv-align-fields "csv-mode" (hard beg end))
+   (csv-align-fields nil (point-min) (point-max))
    (hl-line-mode)))
 
 ;; --------------------------------------------------------- [ Dired ]

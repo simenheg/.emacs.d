@@ -538,15 +538,6 @@
                  "received-spf"
                  "thread-index"))))
 
-;; ------------------------------------------------------ [ Markdown ]
-(add-to-list 'auto-mode-alist '("\\.md$" . markdown-mode))
-
-(declare-function markdown-export-and-preview "markdown-mode")
-(add-hook
- 'markdown-mode-hook
- (lambda ()
-   (local-set-key (kbd "C-c C-e") #'markdown-export-and-preview)))
-
 ;; ------------------------------------------------------ [ Midnight ]
 (midnight-mode 1)
 

@@ -5,15 +5,20 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        backward-kill-sexp
         backward-sexp
         beginning-of-indentation-or-line
         c-electric-delete-forward
         c-electric-semi&comma
         c-indent-line-or-region
+        comment-dwim
+        csv-tab-command
+        dabbrev-expand
         delete-indentation
         forward-sexp
         indent-for-tab-command
         kill-region-or-backward-kill-sexp
+        kill-sexp
         mark-sexp
         move-line-up
         org-beginning-of-line
@@ -23,7 +28,13 @@
         org-force-self-insert
         org-self-insert-command
         org-todo
+        paredit-backward
         paredit-doublequote
+        paredit-forward
+        paredit-forward-delete
+        paredit-forward-kill-word
+        paredit-newline
+        paredit-open-round
         transpose-sexps
         yas-expand
         ))

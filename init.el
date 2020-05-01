@@ -492,7 +492,21 @@
 (add-hook 'git-commit-mode-hook (lambda () (flyspell-mode 1)))
 
 ;; ---------------------------------------------------------- [ Mail ]
-(require 'private-stuff nil t)
+(load "private-stuff" t)
+
+(setq user-mail-address "simenheg@runbox.com")
+(setq mail-user-agent 'gnus-user-agent)
+
+(setq gnus-use-full-window nil)
+
+;; IMAP
+(setq gnus-select-method '(nnimap "mail.runbox.com"))
+(setq gnus-secondary-select-methods '((nnimap "imap.gmail.com")))
+(setq gnus-message-archive-group "nnimap:Sent")
+
+;; SMTP
+(setq smtpmail-smtp-server "mail.runbox.com")
+(setq send-mail-function #'smtpmail-send-it)
 
 ;; Expand mail-aliases on `next-line' and `end-of-buffer'
 (add-hook

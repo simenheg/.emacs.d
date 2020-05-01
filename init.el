@@ -673,13 +673,7 @@ nonstopmode' -pdf -f %f"))))
    (push "editable" web-mode-django-control-blocks)
    (push "endeditable" web-mode-django-control-blocks)
    (setq web-mode-django-control-blocks-regexp
-         (regexp-opt web-mode-django-control-blocks t))
-   (local-set-key
-    (kbd "C-c C-o")
-    (lambda ()
-      (interactive)
-      (let ((sgml-tag-alist html-tag-alist))
-        (sgml-tag))))))
+         (regexp-opt web-mode-django-control-blocks t))))
 
 ;;--------------------------------------------------------- [ Custom ]
 (custom-set-faces

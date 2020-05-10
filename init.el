@@ -414,6 +414,7 @@
 (add-hook
  'java-mode
  (lambda ()
+   (defvar c-offsets-alist)
    (setq-local
     c-offsets-alist
     (append
@@ -606,6 +607,7 @@ nonstopmode' -pdf -f %f"))))
 (add-hook
  'python-mode-hook
  (lambda ()
+   (defvar python-fill-docstring-style)
    (setq-local fill-column 79)
    (setq-local python-fill-docstring-style 'pep-257-nn)
    (setq-local
@@ -648,6 +650,7 @@ nonstopmode' -pdf -f %f"))))
 (define-key ctl-x-map "to" 'timeclock-out)
 
 ;; ------------------------------------------------------------ [ VC ]
+(declare-function log-edit-insert-message-template "log-edit" ())
 (remove-hook 'log-edit-hook #'log-edit-insert-message-template)
 (add-hook 'log-edit-mode-hook (lambda () (flyspell-mode 1)))
 (add-hook 'log-view-mode-hook (lambda () (hl-line-mode 1)))

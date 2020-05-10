@@ -1,8 +1,6 @@
 ;; init.el --- Personal Emacs configurations
 ;; Author: Simen Heggestøyl <simenheg@gmail.com>
 
-(require 'package)
-
 (setq
  package-archives
  `(("GNU" . "http://elpa.gnu.org/packages/")
@@ -122,7 +120,7 @@
   (normal-top-level-add-subdirs-to-load-path))
 
 ;; Miscellaneous utility functions
-(require 'defuns)
+(load "defuns")
 
 (global-set-key (kbd "C-'")     'org-cycle-agenda-files)
 (global-set-key (kbd "C-+")     'dec-next-number)
@@ -258,12 +256,10 @@
    (auto-fill-mode -1)))
 
 ;; ------------------------------------------------------- [ Company ]
-(require 'company)
-
 (setq company-minimum-prefix-length 2)
 (setq company-idle-delay 0.1)
 
-(add-hook 'prog-mode-hook #'company-mode-on)
+(add-hook 'prog-mode-hook (lambda () (company-mode 1)))
 
 ;; ----------------------------------------------------------- [ CSV ]
 (add-hook
@@ -384,13 +380,14 @@
 (add-hook 'factor-mode-hook (lambda () (setq-local fill-column 64)))
 
 ;; ------------------------------------------------------- [ Flymake ]
-(require 'flymake)
+(with-eval-after-load 'flymake
+  (defvar flymake-mode-map)
 
-(define-key flymake-mode-map (kbd "M-g M-n")
-  'flymake-goto-next-error)
+  (define-key flymake-mode-map (kbd "M-g M-n")
+    'flymake-goto-next-error)
 
-(define-key flymake-mode-map (kbd "M-g M-p")
-  'flymake-goto-prev-error)
+  (define-key flymake-mode-map (kbd "M-g M-p")
+    'flymake-goto-prev-error))
 
 ;; ---------------------------------------------- [ Google Translate ]
 (autoload 'google-translate-at-point "google-translate" nil t)
@@ -435,17 +432,16 @@
 (add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
 
 ;; ---------------------------------------------------------- [ JSON ]
-(require 'json-mode)
-
 (dolist (filename '(".arcconfig" ".arclint" ".babelrc" ".bowerrc"
                     ".eslintrc"))
   (add-to-list 'auto-mode-alist (cons filename 'json-mode)))
 
 ;; --------------------------------------------------------- [ LaTeX ]
-(require 'tex-mode)
-
-(setq tex--prettify-symbols-alist
-      (assoc-delete-all "\\newline" tex--prettify-symbols-alist))
+(add-hook
+ 'text-mode-hook
+ (lambda ()
+   (setq-local prettify-symbols-alist
+               (assoc-delete-all "\\newline" prettify-symbols-alist))))
 
 ;; ---------------------------------------------------------- [ Lisp ]
 (autoload 'let-fix "autolet" "Automatic let-form fixer" t)
@@ -634,15 +630,14 @@ nonstopmode' -pdf -f %f"))))
 (setq-default sql-product 'postgres)
 
 ;; ----------------------------------------------------- [ Terraform ]
-(require 'terraform-mode)
+(declare-function terraform-format-on-save-mode "terraform-mode"
+                  (&optional ARG))
 (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
 
 ;; ----------------------------------------------------- [ Text mode ]
 (add-hook 'text-mode-hook (lambda () (auto-fill-mode 1)))
 
 ;; ----------------------------------------------------- [ Timeclock ]
-(require 'timeclock)
-
 ;; Don't ask for a reason when clocking out
 (setq timeclock-get-reason-function nil)
 

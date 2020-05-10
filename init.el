@@ -14,11 +14,11 @@
 
 (setq
  package-archive-priorities
- '(("local" . 4)
-   ("GNU" . 3)
-   ("MELPA Stable" . 2)
-   ("marmalade" . 2)
-   ("MELPA" . 1)))
+ '(("local" . 5)
+   ("GNU" . 4)
+   ("MELPA Stable" . 3)
+   ("MELPA" . 2)
+   ("marmalade" . 1)))
 
 (setq
  package-selected-packages

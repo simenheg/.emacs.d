@@ -310,14 +310,14 @@
 (setq doc-view-continuous t) ; Smooth document viewing
 
 ;; --------------------------------------------------------- [ Eglot ]
-(require 'eglot)
+(with-eval-after-load 'eglot
+  (defvar eglot-ignored-server-capabilites)
+  (push :documentHighlightProvider eglot-ignored-server-capabilites))
 
 (add-hook
- 'eglot--managed-mode-hook
+ 'eglot-managed-mode-hook
  (lambda ()
    (setq mode-line-misc-info nil)))
-
-(push :documentHighlightProvider eglot-ignored-server-capabilites)
 
 ;; --------------------------------------------------------- [ Emacs ]
 ;; Set EDITOR environment variable

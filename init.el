@@ -25,6 +25,7 @@
    blacken
    company
    company-quickhelp
+   counsel
    csv-mode
    cycle-quotes
    debbugs
@@ -37,7 +38,6 @@
    geiser
    gnuplot
    google-translate
-   ivy
    js2-mode
    json-mode
    know-your-http-well

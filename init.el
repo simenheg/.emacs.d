@@ -50,7 +50,6 @@
    norwegian-holidays
    paredit
    php-mode
-   projectile
    pyvenv
    rdf-prefix
    restclient
@@ -141,6 +140,9 @@
 (global-set-key (kbd "C-c l")   'mc/mark-all-like-this)
 (global-set-key (kbd "C-c m")   'gnus)
 (global-set-key (kbd "C-c n")   'mc/mark-next-like-this)
+(global-set-key (kbd "C-c p f") 'counsel-project-find-file)
+(global-set-key (kbd "C-c p p") 'counsel-project-switch-project)
+(global-set-key (kbd "C-c p s") 'counsel-ag)
 (global-set-key (kbd "C-c r")   'rename-buffer)
 (global-set-key (kbd "C-c t")   'google-translate-at-point)
 (global-set-key (kbd "C-c v")   'magit-status)
@@ -220,7 +222,6 @@
     (js2-mode "js2")
     (magit-auto-revert-mode . "")
     (paredit-mode . "")
-    (projectile-mode . "")
     (python-mode . "🐍")
     (subword-mode . "")
     (yas-minor-mode . "")))
@@ -397,15 +398,8 @@
       google-translate-default-target-language "en")
 
 ;; ----------------------------------------------------------- [ Ivy ]
-(require 'counsel)
-(ivy-configure 'counsel-M-x :initial-input "")
-
-(defun counsel-ag-projectile
-    (&optional initial-input initial-directory extra-ag-args
-               ag-prompt)
-  (interactive)
-  (counsel-ag initial-input (projectile-project-root)
-              extra-ag-args ag-prompt))
+(with-eval-after-load 'counsel
+  (ivy-configure 'counsel-M-x :initial-input ""))
 
 ;; ---------------------------------------------------------- [ Java ]
 (add-hook
@@ -586,16 +580,22 @@ nonstopmode' -pdf -f %f"))))
 (add-to-list 'auto-mode-alist '("\\.parq$" . parquet-mode))
 (add-to-list 'auto-mode-alist '("\\.parquet$" . parquet-mode))
 
-;; ---------------------------------------------------- [ Projectile ]
-(projectile-global-mode)
+;; ------------------------------------------------------- [ Project ]
+(defun counsel-project-find-file ()
+  (interactive)
+  (let ((completing-read-function 'ivy-completing-read))
+    (project-find-file)))
 
-(setq projectile-completion-system 'ivy)
+(defun counsel-project-switch-project ()
+  (interactive)
+  (let ((completing-read-function 'ivy-completing-read))
+    (project-switch-project)))
 
-(define-key projectile-mode-map (kbd "C-c p")
-  'projectile-command-map)
+(defun project-magit ()
+  (interactive)
+  (magit-status (project-root (project-current))))
 
-(define-key projectile-command-map (kbd "s")
-  'counsel-ag-projectile)
+(add-to-list 'project-switch-commands '(?m "Magit" project-magit) t)
 
 ;; -------------------------------------------------------- [ Python ]
 (add-hook 'python-mode-hook 'eglot-ensure)

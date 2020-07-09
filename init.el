@@ -642,9 +642,6 @@ nonstopmode' -pdf -f %f"))))
 ;; Don't ask for a reason when clocking out
 (setq timeclock-get-reason-function nil)
 
-(define-key ctl-x-map "ti" 'timeclock-in)
-(define-key ctl-x-map "to" 'timeclock-out)
-
 ;; ------------------------------------------------------------ [ VC ]
 (declare-function log-edit-insert-message-template "log-edit" ())
 (remove-hook 'log-edit-hook #'log-edit-insert-message-template)

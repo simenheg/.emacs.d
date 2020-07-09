@@ -498,6 +498,7 @@
 
 ;; SMTP
 (setq smtpmail-smtp-server "mail.runbox.com")
+(setq smtpmail-smtp-service 587)
 (setq send-mail-function #'smtpmail-send-it)
 
 ;; Expand mail-aliases on `next-line' and `end-of-buffer'

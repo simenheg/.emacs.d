@@ -129,7 +129,6 @@
 (global-set-key (kbd "C-S-k")   'kill-whole-line)
 (global-set-key (kbd "C-\"")    'cycle-quotes)
 (global-set-key (kbd "C-a")     'beginning-of-indentation-or-line)
-(global-set-key (kbd "C-c C-'") 'electric-quote-mode)
 (global-set-key (kbd "C-c M-$") 'ispell-change-dictionary)
 (global-set-key (kbd "C-c SPC") 'avy-goto-word-1)
 (global-set-key (kbd "C-c a")   'org-agenda)

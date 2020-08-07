@@ -60,8 +60,6 @@
    terraform-mode
    undo-tree
    web-mode
-   wgrep
-   wgrep-ag
    xref-js2
    yaml-mode
    yasnippet))

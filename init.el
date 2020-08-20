@@ -49,7 +49,6 @@
    nodejs-repl
    norwegian-holidays
    paredit
-   php-mode
    pyvenv
    rdf-prefix
    restclient

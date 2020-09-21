@@ -179,6 +179,17 @@ create a new session."
             (number-sequence ?A ?Z))
     len)))
 
+(defun kill-region-or-backward-delete-sexp (&optional arg region)
+  "Kill region if active, else backward delete sexp."
+  (interactive
+   (list (prefix-numeric-value current-prefix-arg) (use-region-p)))
+  (if region
+      (kill-region (region-beginning) (region-end) t)
+    (let ((end (point)))
+      (save-excursion
+        (backward-sexp)
+        (delete-region (point) end)))))
+
 (defun kill-region-or-backward-kill-sexp (&optional arg region)
   "`kill-region' if the region is active, otherwise
 `backward-kill-sexp'"

@@ -144,7 +144,7 @@
 (global-set-key (kbd "C-c v")   'magit-status)
 (global-set-key (kbd "C-c w")   'compare-windows)
 (global-set-key (kbd "C-j")     'newline)
-(global-set-key (kbd "C-w")     'kill-region-or-backward-kill-sexp)
+(global-set-key (kbd "C-w")     'kill-region-or-backward-delete-sexp)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "C-x b")   'ivy-switch-buffer)
 (global-set-key (kbd "C-x k")   'kill-this-buffer)

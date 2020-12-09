@@ -648,8 +648,7 @@ nonstopmode' -pdf -f %f"))))
 (add-to-list 'auto-mode-alist '("\\.vue\\'" . mhtml-mode))
 
 ;; ------------------------------------------------------ [ Web mode ]
-(dolist (ext '("\\.html" "\\.jinja"))
-  (add-to-list 'auto-mode-alist (cons ext 'web-mode)))
+(add-to-list 'auto-mode-alist '("\\.jinja\\'" . web-mode))
 
 (setq
  web-mode-enable-auto-indentation nil

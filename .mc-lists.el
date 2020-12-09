@@ -14,18 +14,24 @@
         comment-dwim
         csv-tab-command
         dabbrev-expand
+        dec-next-number
         delete-indentation
+        delete-region-or-backward-delete-sexp
         forward-sexp
+        inc-next-number
         indent-for-tab-command
+        kill-region-or-backward-delete-sexp
         kill-region-or-backward-kill-sexp
         kill-sexp
         mark-sexp
+        markdown-outdent-or-delete
         move-line-up
         org-beginning-of-line
         org-cycle
         org-delete-char
         org-end-of-line
         org-force-self-insert
+        org-kill-line
         org-self-insert-command
         org-todo
         paredit-backward
@@ -36,6 +42,7 @@
         paredit-newline
         paredit-open-round
         transpose-sexps
+        transpose-words
         yas-expand
         ))
 

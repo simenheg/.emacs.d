@@ -215,6 +215,7 @@
     (eldoc-mode . "")
     (emacs-lisp-mode . "el")
     (flymake-mode . "")
+    (flyspell-mode . " ✅")
     (js2-mode "js2")
     (magit-auto-revert-mode . "")
     (paredit-mode . "")

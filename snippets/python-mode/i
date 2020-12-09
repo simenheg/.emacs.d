@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: i
+# key: i
+# --
+def __init__(self):
+    $0

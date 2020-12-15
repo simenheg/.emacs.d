@@ -632,9 +632,6 @@ nonstopmode' -pdf -f %f"))))
                   (&optional ARG))
 (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
 
-;; ----------------------------------------------------- [ Text mode ]
-(add-hook 'text-mode-hook (lambda () (auto-fill-mode 1)))
-
 ;; ----------------------------------------------------- [ Timeclock ]
 ;; Don't ask for a reason when clocking out
 (setq timeclock-get-reason-function nil)
@@ -642,7 +639,11 @@ nonstopmode' -pdf -f %f"))))
 ;; ------------------------------------------------------------ [ VC ]
 (declare-function log-edit-insert-message-template "log-edit" ())
 (remove-hook 'log-edit-hook #'log-edit-insert-message-template)
-(add-hook 'log-edit-mode-hook (lambda () (flyspell-mode 1)))
+(add-hook
+ 'log-edit-mode-hook
+ (lambda ()
+   (flyspell-mode 1)
+   (auto-fill-mode 1)))
 (add-hook 'log-view-mode-hook (lambda () (hl-line-mode 1)))
 
 ;; ----------------------------------------------------------- [ Vue ]

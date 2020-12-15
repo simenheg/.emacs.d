@@ -587,7 +587,7 @@ nonstopmode' -pdf -f %f"))))
 (defun counsel-project-switch-project ()
   (interactive)
   (let ((completing-read-function 'ivy-completing-read))
-    (project-switch-project)))
+    (call-interactively 'project-switch-project)))
 
 (defun project-magit ()
   (interactive)

@@ -1,22 +1,22 @@
 ;; init.el --- Personal Emacs configurations
-;; Author: Simen Heggestøyl <simenheg@gmail.com>
+;; Author: Simen Heggestøyl <simenheg@runbox.com>
+
+(require 'package)
 
 (setq
  package-archives
- `(("GNU" . "http://elpa.gnu.org/packages/")
-   ("marmalade" . "http://marmalade-repo.org/packages/")
-   ("MELPA Stable" . "http://stable.melpa.org/packages/")
-   ("MELPA" . "http://melpa.org/packages/")
-   ("magit-1" . "http://magit.vc/elpa/v1/packages/")
-   ("local" . ,(locate-user-emacs-file "lisp/packages/"))))
+ '(("GNU" . "https://elpa.gnu.org/packages/")
+   ("NonGNU" . "https://elpa.gnu.org/nongnu/")
+   ("MELPA Stable" . "https://stable.melpa.org/packages/")
+   ("MELPA" . "https://melpa.org/packages/")
+   ("magit-1" . "https://magit.vc/elpa/v1/packages/")))
 
 (setq
  package-archive-priorities
- '(("local" . 5)
-   ("GNU" . 4)
-   ("MELPA Stable" . 3)
-   ("MELPA" . 2)
-   ("marmalade" . 1)))
+ '(("GNU" . 4)
+   ("NonGNU" . 3)
+   ("MELPA Stable" . 2)
+   ("MELPA" . 1)))
 
 (setq
  package-selected-packages

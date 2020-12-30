@@ -267,6 +267,9 @@
    (csv-align-fields nil (point-min) (point-max))
    (hl-line-mode)))
 
+;; ---------------------------------------------------------- [ Diff ]
+(setq diff-font-lock-prettify t)
+
 ;; --------------------------------------------------------- [ Dired ]
 (add-hook
  'dired-load-hook

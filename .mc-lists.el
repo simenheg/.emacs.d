@@ -13,10 +13,12 @@
         c-indent-line-or-region
         comment-dwim
         csv-tab-command
+        cycle-quotes
         dabbrev-expand
         dec-next-number
         delete-indentation
         delete-region-or-backward-delete-sexp
+        eval-last-sexp
         forward-sexp
         inc-next-number
         indent-for-tab-command
@@ -32,8 +34,10 @@
         org-end-of-line
         org-force-self-insert
         org-kill-line
+        org-open-line
         org-self-insert-command
         org-todo
+        org-yank
         paredit-backward
         paredit-doublequote
         paredit-forward
@@ -41,6 +45,9 @@
         paredit-forward-kill-word
         paredit-newline
         paredit-open-round
+        paredit-raise-sexp
+        paredit-splice-sexp
+        sgml-slash
         transpose-sexps
         transpose-words
         yas-expand

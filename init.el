@@ -8,8 +8,7 @@
  '(("GNU" . "https://elpa.gnu.org/packages/")
    ("NonGNU" . "https://elpa.gnu.org/nongnu/")
    ("MELPA Stable" . "https://stable.melpa.org/packages/")
-   ("MELPA" . "https://melpa.org/packages/")
-   ("magit-1" . "https://magit.vc/elpa/v1/packages/")))
+   ("MELPA" . "https://melpa.org/packages/")))
 
 (setq
  package-archive-priorities
@@ -65,7 +64,6 @@
 
 (setq package-pinned-packages
       '((json-mode . "GNU")
-        (magit . "magit-1")
         (hcl-mode . "MELPA")))
 
 (unless (file-exists-p package-user-dir)
@@ -479,9 +477,17 @@
       t))))
 
 ;; --------------------------------------------------------- [ Magit ]
-(setq magit-last-seen-setup-instructions "1.4.0")
+(setq git-commit-summary-max-length 50)
 
 (add-hook 'git-commit-mode-hook (lambda () (flyspell-mode 1)))
+
+(add-hook
+ 'magit-diff-mode-hook
+ (lambda ()
+   (define-key magit-diff-section-base-map (kbd "C-<return>")
+     'magit-diff-visit-file)
+   (define-key magit-diff-section-base-map [remap magit-visit-thing]
+     'magit-diff-visit-worktree-file)))
 
 ;; ---------------------------------------------------------- [ Mail ]
 (load "private-stuff" t)
@@ -687,16 +693,11 @@ nonstopmode' -pdf -f %f"))))
  '(erc-timestamp-face ((t (:foreground "pale green" :weight bold))))
  '(flymake-error ((t (:underline (:color "salmon1" :style wave)))))
  '(geiser-font-lock-repl-prompt ((t (:inherit comint-highlight-prompt))))
- '(git-commit-summary-face ((t (:foreground "#000000"))))
  '(ivy-current-match ((t (:background "#FFF876" :foreground "black"))))
  '(ivy-minibuffer-match-face-1 ((t nil)))
  '(ivy-minibuffer-match-face-2 ((t (:background "#FBE448" :weight bold))))
  '(ivy-minibuffer-match-face-3 ((t (:background "#FBE448" :weight bold))))
  '(ivy-minibuffer-match-face-4 ((t (:background "#FBE448" :weight bold))))
- '(magit-blame-header ((t (:inherit magit-diff-file-header))))
- '(magit-diff-file-header ((t (:background "#ffeeff" :foreground "#4183C4" :weight bold :height 1.1 :family "Sans Serif"))))
- '(magit-log-author ((t (:foreground "firebrick"))))
- '(magit-log-message ((t nil)))
  '(nxml-element-local-name ((t (:background "white smoke" :foreground "SteelBlue" :box (:line-width 1 :color "light gray")))))
  '(org-document-title ((t (:foreground "black" :weight bold :height 1.2 :family "Sans Serif"))))
  '(slime-repl-inputed-output-face ((t (:foreground "#729fcf"))) t))

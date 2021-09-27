@@ -12,6 +12,7 @@
         c-electric-semi&comma
         c-indent-line-or-region
         comment-dwim
+        complete-symbol
         csv-tab-command
         cycle-quotes
         dabbrev-expand

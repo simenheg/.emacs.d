@@ -2,5 +2,5 @@
 # name: d
 # key: d
 # --
-def $1(`(when (python-info-current-defun) "self")`$2):
+def $1(`(when (and (python-info-current-defun) (let ((case-fold-search nil)) (string-match-p "[[:upper:]]" (python-info-current-defun)))) "self")`$2):
     $3

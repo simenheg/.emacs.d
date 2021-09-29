@@ -602,7 +602,14 @@ nonstopmode' -pdf -f %f"))))
   (interactive)
   (magit-status (project-root (project-current))))
 
-(add-to-list 'project-switch-commands '(?m "Magit" project-magit) t)
+(setq
+ project-switch-commands
+ '((counsel-project-find-file "Find file")
+   (project-find-regexp "Find regexp")
+   (project-dired "Dired")
+   (project-vc-dir "VC-Dir")
+   (project-eshell "Eshell")
+   (project-magit "Magit" ?m)))
 
 ;; -------------------------------------------------------- [ Python ]
 (add-hook 'python-mode-hook 'eglot-ensure)

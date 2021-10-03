@@ -631,6 +631,8 @@ nonstopmode' -pdf -f %f"))))
    (local-set-key
     (kbd "C-c C-c") 'restclient-http-send-current-stay-in-window)))
 
+(add-hook 'restclient-test-mode-hook #'flymake-mode)
+
 ;; -------------------------------------------------------- [ Scheme ]
 (setq geiser-active-implementations '(guile)
       geiser-repl-query-on-kill-p nil)

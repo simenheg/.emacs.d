@@ -2,6 +2,7 @@ anaconda-mode/
 auto-save-list/
 autosaves/
 bookmarks
+eln-cache/
 elpa/
 eshell/
 history

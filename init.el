@@ -233,11 +233,6 @@
 (setq slime-contribs '(slime-fancy slime-repl))
 (setq slime-repl-history-size 1000)
 
-;; More sensible `loop' indentation
-(setq lisp-loop-forms-indentation   2
-      lisp-simple-loop-indentation  2
-      lisp-loop-keyword-indentation 6)
-
 (add-hook
  'slime-repl-mode-hook
  (lambda ()

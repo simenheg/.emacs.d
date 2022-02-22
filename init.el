@@ -544,6 +544,8 @@
  org-agenda-include-diary t
  org-clock-clocked-in-display nil)
 
+(setq org-startup-folded t)
+
 ;; Ignore irrelevant holidays
 (setq
  holiday-bahai-holidays nil

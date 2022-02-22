@@ -161,6 +161,14 @@ create a new session."
          (ndashes (- fill-column (current-column) (length header))))
     (insert (concat (make-string ndashes ?-) header))))
 
+(defun insert-random-hex (len)
+  "Insert a random hexadecimal string of length LEN."
+  (interactive "NLength: ")
+  (insert
+   (random-string
+    "0123456789abcdef"
+    len)))
+
 (defun insert-random-password (len)
   "Insert a password-friendly random string of length LEN."
   (interactive "NLength: ")

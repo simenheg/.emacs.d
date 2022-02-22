@@ -216,9 +216,11 @@
     (flyspell-mode . " ✅")
     (js2-mode "js2")
     (magit-auto-revert-mode . "")
+    (org-mode . "🦄")
     (paredit-mode . "")
     (python-mode . "🐍")
     (subword-mode . "")
+    (with-editor-mode . "")
     (yas-minor-mode . "")))
 
 (add-hook

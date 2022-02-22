@@ -21,17 +21,20 @@
         delete-region-or-backward-delete-sexp
         eval-last-sexp
         forward-sexp
+        hcl-beginning-of-defun
         inc-next-number
         indent-for-tab-command
         kill-region-or-backward-delete-sexp
         kill-region-or-backward-kill-sexp
         kill-sexp
+        magit-section-toggle
         mark-sexp
         markdown-outdent-or-delete
         move-line-up
         org-beginning-of-line
         org-cycle
         org-delete-char
+        org-delete-indentation
         org-end-of-line
         org-force-self-insert
         org-kill-line
@@ -51,9 +54,12 @@
         sgml-slash
         transpose-sexps
         transpose-words
+        yaml-electric-dash-and-dot
         yas-expand
         ))
 
 (setq mc/cmds-to-run-once
       '(
+        counsel-M-x
+        ivy-alt-done
         ))

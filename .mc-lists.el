@@ -19,6 +19,7 @@
         dec-next-number
         delete-indentation
         delete-region-or-backward-delete-sexp
+        electric-pair-delete-pair
         eval-last-sexp
         forward-sexp
         hcl-beginning-of-defun
@@ -41,6 +42,7 @@
         org-open-line
         org-self-insert-command
         org-todo
+        org-transpose-words
         org-yank
         paredit-backward
         paredit-doublequote
@@ -50,6 +52,7 @@
         paredit-newline
         paredit-open-round
         paredit-raise-sexp
+        paredit-semicolon
         paredit-splice-sexp
         sgml-slash
         transpose-sexps

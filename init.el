@@ -605,7 +605,7 @@ nonstopmode' -pdf -f %f"))))
  project-switch-commands
  '((counsel-project-find-file "Find file")
    (project-find-regexp "Find regexp")
-   (project-dired "Dired")
+   (project-find-dir "Find directory")
    (project-vc-dir "VC-Dir")
    (project-eshell "Eshell")
    (project-magit "Magit" ?m)))

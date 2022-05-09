@@ -103,16 +103,6 @@ commented out before it's copied."
         (insert to-duplicate)))
     (backward-char (- end point))))
 
-(defadvice eval-last-sexp (around replace-sexp (arg) activate)
-  "Replace sexp when called with a prefix argument."
-  (if arg
-      (let ((pos (point)))
-        ad-do-it
-        (goto-char pos)
-        (backward-kill-sexp)
-        (forward-sexp))
-    ad-do-it))
-
 (defun fmt (symbols)
   "Insert '(format t \"x1: ~a, x2: ~a, ..., xn: ~a~%)' for every
 x separated by a space in `symbols'."

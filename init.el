@@ -36,7 +36,6 @@
    fuel
    geiser
    gnuplot
-   google-translate
    js2-mode
    json-mode
    know-your-http-well
@@ -135,7 +134,6 @@
 (global-set-key (kbd "C-c m")   'gnus)
 (global-set-key (kbd "C-c n")   'mc/mark-next-like-this)
 (global-set-key (kbd "C-c r")   'rename-buffer)
-(global-set-key (kbd "C-c t")   'google-translate-at-point)
 (global-set-key (kbd "C-c w")   'compare-windows)
 (global-set-key (kbd "C-j")     'newline)
 (global-set-key (kbd "C-w")     'kill-region-or-backward-delete-sexp)
@@ -384,13 +382,6 @@
 
   (define-key flymake-mode-map (kbd "M-g M-p")
     'flymake-goto-prev-error))
-
-;; ---------------------------------------------- [ Google Translate ]
-(autoload 'google-translate-at-point "google-translate" nil t)
-(autoload 'google-query-translate "google-translate" nil t)
-
-(setq google-translate-default-source-language "no"
-      google-translate-default-target-language "en")
 
 ;; ----------------------------------------------------------- [ Ivy ]
 (with-eval-after-load 'counsel

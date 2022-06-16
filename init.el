@@ -87,7 +87,6 @@
  display-time-24hr-format       t  ; 24 hour time format
  eshell-hist-ignoredups         t  ; Ignore duplicate history
  eshell-history-size        10000  ; Lengthen Eshell history
- gc-cons-threshold       20000000  ; Run GC only every 20 MB
  history-delete-duplicates      t  ; Delete duplicate history entries
  inhibit-startup-screen         t  ; No startup screen
  initial-scratch-message      nil  ; No scratch message

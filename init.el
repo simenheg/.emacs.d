@@ -487,7 +487,6 @@
 
 ;; IMAP
 (setq gnus-select-method '(nnimap "mail.runbox.com"))
-(setq gnus-secondary-select-methods '((nnimap "imap.gmail.com")))
 (setq gnus-message-archive-group "nnimap:Sent")
 
 ;; SMTP

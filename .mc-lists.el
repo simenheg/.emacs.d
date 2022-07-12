@@ -19,6 +19,7 @@
         dec-next-number
         delete-indentation
         delete-region-or-backward-delete-sexp
+        down-list
         electric-pair-delete-pair
         eval-last-sexp
         forward-sexp

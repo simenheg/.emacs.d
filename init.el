@@ -93,12 +93,12 @@
  kill-read-only-ok              t  ; Killing read-only text is OK
  password-cache-expiry        nil  ; Cache TRAMP passwords forever
  sentence-end-double-space    nil  ; Fill with single spaces
- show-paren-delay               0) ; Don't delay the paren update
+ show-paren-delay               0  ; Don't delay the paren update
+ use-short-answers              t) ; Make "yes/no" prompts "y/n"
 
 (blink-cursor-mode              0) ; No blinking cursor
 (column-number-mode             1) ; Show column number
 (editorconfig-mode              1) ; Respect EditorConfig files
-(fset 'yes-or-no-p      'y-or-n-p) ; Make "yes/no" prompts "y/n"
 (global-auto-revert-mode        1) ; Reload files after modification
 (global-prettify-symbols-mode   1) ; Pretty symbols (e.g. lambda => λ)
 (global-subword-mode            1) ; Better editing of camelCasedWords

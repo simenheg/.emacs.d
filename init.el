@@ -618,7 +618,8 @@ nonstopmode' -pdf -f %f"))))
 (add-hook
  'pyvenv-post-activate-hooks
  (lambda ()
-   (call-interactively #'eglot-reconnect)))
+   (when (fboundp 'eglot-reconnect)
+     (call-interactively #'eglot-reconnect))))
 
 ;; --------------------------------------------------- [ REST Client ]
 (add-to-list 'auto-mode-alist '("\\.http" . restclient-mode))

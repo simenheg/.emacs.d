@@ -94,6 +94,7 @@
  password-cache-expiry        nil  ; Cache TRAMP passwords forever
  sentence-end-double-space    nil  ; Fill with single spaces
  show-paren-delay               0  ; Don't delay the paren update
+ sort-fold-case                 t  ; Don't care about case when sorting
  use-short-answers              t) ; Make "yes/no" prompts "y/n"
 
 (blink-cursor-mode              0) ; No blinking cursor

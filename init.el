@@ -323,9 +323,6 @@
 
 (setq max-mini-window-height 0.2)
 
-;; Set current buffer as the window name
-(setq-default frame-title-format (list "%b %f"))
-
 ;; Electric pairs
 (electric-pair-mode 1)
 

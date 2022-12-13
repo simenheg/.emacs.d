@@ -348,6 +348,12 @@
  (lambda ()
    (setq sentence-end-double-space t)))
 
+(add-hook
+ 'paredit-mode-hook
+ (lambda ()
+   (define-key paredit-mode-map (kbd "RET") nil)
+   (define-key paredit-mode-map (kbd "C-j") nil)))
+
 ;; ----------------------------------------------------------- [ ERC ]
 (setq erc-fill-column fill-column)
 

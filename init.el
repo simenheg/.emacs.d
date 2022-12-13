@@ -30,7 +30,6 @@
    debbugs
    dockerfile-mode
    editorconfig
-   eglot
    exec-path-from-shell
    focus
    fuel

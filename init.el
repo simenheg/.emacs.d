@@ -526,6 +526,9 @@
                  "received-spf"
                  "thread-index"))))
 
+;; ------------------------------------------------------ [ Markdown ]
+(add-hook 'markdown-mode-hook #'turn-on-flyspell)
+
 ;; ------------------------------------------------------ [ Midnight ]
 (midnight-mode 1)
 

@@ -20,7 +20,7 @@ then recompile the file."
     (byte-compile-file buffer-file-name)))
 
 (defun beginning-of-indentation-or-line ()
-  "Sets point back to indentation level. If already there, sets
+  "Set point back to indentation level. If already there, set
 point to beginning of line."
   (interactive)
   (let ((prev (point)))
@@ -151,13 +151,30 @@ create a new session."
          (ndashes (- fill-column (current-column) (length header))))
     (insert (concat (make-string ndashes ?-) header))))
 
+(defun insert-org-latex-language (lang)
+  (interactive "sLanguage code [nb]: ")
+  (when (string-empty-p lang)
+    (setq lang "nb"))
+  (insert (format "#+LANGUAGE: %s\n" lang))
+  (insert (format "#+LATEX_HEADER: \\usepackage[%s]{babel}\n" lang)))
+
+(defun insert-pseudo-uuid ()
+  (interactive)
+  (insert-random-hex-multiple "8 4 4 4 12"))
+
 (defun insert-random-hex (len)
   "Insert a random hexadecimal string of length LEN."
   (interactive "NLength: ")
+  (insert (random-hex len)))
+
+(defun insert-random-hex-multiple (lenghts)
+  "Insert multiple random hexadecimal strings separated by '-'."
+  (interactive "sLength: ")
   (insert
-   (random-string
-    "0123456789abcdef"
-    len)))
+   (string-join
+    (mapcar (lambda (l) (random-hex (string-to-number l)))
+            (split-string lenghts " "))
+    "-")))
 
 (defun insert-random-password (len)
   "Insert a password-friendly random string of length LEN."
@@ -238,6 +255,10 @@ Point stays at the same position in the original line."
     (forward-line -2)
     (move-to-column col)))
 
+(defun random-hex (len)
+  "Return a random hexadecimal string of length LEN."
+  (random-string "0123456789abcdef" len))
+
 (defun random-string (chars len)
   "Return a string of LEN random characters from CHARS."
   (apply #'string (make-list* len #'seq-random-elt chars)))
@@ -246,6 +267,21 @@ Point stays at the same position in the original line."
   "Like `revert-buffer', but don't ask for confirmation."
   (interactive)
   (revert-buffer nil t))
+
+(defun sort-lines-random ()
+  "Sort lines in the buffer or region in a random order."
+  (interactive)
+  (replace-region-contents
+   (if (region-active-p) (region-beginning) (point-min))
+   (if (region-active-p) (region-end) (point-max))
+   (lambda ()
+     (let ((lines (split-string (buffer-string) "\n" t))
+           (res '()))
+       (while lines
+         (let ((next (seq-random-elt lines)))
+           (setq lines (delete next lines))
+           (push next res)))
+       (string-join res "\n")))))
 
 (defun tidy-buffer ()
   "Ident, untabify and unwhitespacify current buffer, or region

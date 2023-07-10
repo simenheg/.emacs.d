@@ -15,11 +15,13 @@
         complete-symbol
         csv-tab-command
         cycle-quotes
+        cycle-spacing
         dabbrev-expand
         dec-next-number
         delete-indentation
         delete-region-or-backward-delete-sexp
         down-list
+        duplicate
         electric-pair-delete-pair
         eval-last-sexp
         forward-sexp
@@ -66,4 +68,5 @@
       '(
         counsel-M-x
         ivy-alt-done
+        xref-go-back
         ))

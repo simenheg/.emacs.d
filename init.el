@@ -35,6 +35,7 @@
    fuel
    geiser
    gnuplot
+   jit-spell
    js2-mode
    json-mode
    know-your-http-well
@@ -210,7 +211,7 @@
     (eldoc-mode . "")
     (emacs-lisp-mode . "el")
     (flymake-mode . "")
-    (flyspell-mode . " ✅")
+    (jit-spell-mode . " ✅")
     (js2-mode "js2")
     (magit-auto-revert-mode . "")
     (org-mode . "🦄")
@@ -473,7 +474,7 @@
 ;; --------------------------------------------------------- [ Magit ]
 (setq git-commit-summary-max-length 50)
 
-(add-hook 'git-commit-mode-hook (lambda () (flyspell-mode 1)))
+(add-hook 'git-commit-mode-hook (lambda () (jit-spell-mode 1)))
 
 (add-hook
  'magit-diff-mode-hook
@@ -509,7 +510,7 @@
      'mail-abbrev-next-line)
    (define-key message-mode-map [remap end-of-buffer]
      'mail-abbrev-end-of-buffer)
-   (flyspell-mode 1)))
+   (jit-spell-mode 1)))
 
 (setq rmail-mime-attachment-dirs-alist '((".*" "~/tmp" "~" "/tmp")))
 
@@ -530,7 +531,7 @@
                  "thread-index"))))
 
 ;; ------------------------------------------------------ [ Markdown ]
-(add-hook 'markdown-mode-hook #'turn-on-flyspell)
+(add-hook 'markdown-mode-hook #'jit-spell-mode)
 
 ;; ------------------------------------------------------ [ Midnight ]
 (midnight-mode 1)
@@ -664,7 +665,7 @@ nonstopmode' -pdf -f %f"))))
 (add-hook
  'log-edit-mode-hook
  (lambda ()
-   (flyspell-mode 1)
+   (jit-spell-mode 1)
    (auto-fill-mode 1)))
 (add-hook 'log-view-mode-hook (lambda () (hl-line-mode 1)))
 

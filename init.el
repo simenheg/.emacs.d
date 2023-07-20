@@ -260,6 +260,9 @@
    (csv-align-fields nil (point-min) (point-max))
    (hl-line-mode)))
 
+;; ------------------------------------------------------- [ Counsel ]
+(setq counsel-ag-base-command "ag --vimgrep --hidden %s")
+
 ;; ---------------------------------------------------------- [ Diff ]
 (setq diff-font-lock-prettify t)
 

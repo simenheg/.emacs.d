@@ -79,30 +79,6 @@ point to beginning of line."
   (when (< 3 (line-number-at-pos))
     ad-do-it))
 
-(defun duplicate (arg)
-  "Duplicate the current line, or region if active.
-When called with a prefix argument the current line or region is
-commented out before it's copied."
-  (interactive "P")
-  (setq arg (or arg 1))
-  (let ((beg (if (region-active-p)
-                 (region-beginning)
-               (line-beginning-position)))
-        (end (if (region-active-p)
-                 (region-end)
-               (line-end-position)))
-        (point (point)))
-    (goto-char end)
-    (let ((to-duplicate (buffer-substring beg end)))
-      (when (listp arg)
-        (comment-region beg end)
-        (setq arg 1))
-      (dotimes (_ arg)
-        (end-of-line)
-        (newline)
-        (insert to-duplicate)))
-    (backward-char (- end point))))
-
 (defun fmt (symbols)
   "Insert '(format t \"x1: ~a, x2: ~a, ..., xn: ~a~%)' for every
 x separated by a space in `symbols'."

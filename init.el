@@ -127,7 +127,7 @@
 (global-set-key (kbd "C-c SPC") 'avy-goto-word-1)
 (global-set-key (kbd "C-c a")   'org-agenda)
 (global-set-key (kbd "C-c c")   'org-capture)
-(global-set-key (kbd "C-c d")   'duplicate)
+(global-set-key (kbd "C-c d")   'duplicate-dwim)
 (global-set-key (kbd "C-c e")   'mc/edit-lines)
 (global-set-key (kbd "C-c f")   'find-grep)
 (global-set-key (kbd "C-c l")   'mc/mark-all-like-this)
@@ -320,6 +320,9 @@
 ;; Fix mouse wheel scrolling
 (setq mouse-wheel-scroll-amount '(2 ((shift) . 1)))
 (setq mouse-wheel-progressive-speed nil)
+
+;; Move point to the first newly duplicated line
+(setq duplicate-line-final-position 1)
 
 ;; Don't bother to ask unless the file *really* is large (100 MB+)
 (setq large-file-warning-threshold 100000000)

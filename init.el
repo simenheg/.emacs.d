@@ -317,9 +317,8 @@
 ;; Set EDITOR environment variable
 (setenv "EDITOR" "emacs -Q")
 
-;; Fix mouse wheel scrolling
-(setq mouse-wheel-scroll-amount '(2 ((shift) . 1)))
-(setq mouse-wheel-progressive-speed nil)
+;; Use pixel scrolling
+(pixel-scroll-precision-mode 1)
 
 ;; Move point to the first newly duplicated line
 (setq duplicate-line-final-position 1)

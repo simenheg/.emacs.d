@@ -9,6 +9,7 @@ history
 image-dired/
 lisp/private-stuff.el
 mail-drafts/
+multisession/
 network-security.data
 org-agenda-files
 projectile-bookmarks.eld
@@ -16,4 +17,5 @@ projects
 session.*
 tramp
 transient/
+tree-sitter/
 url/

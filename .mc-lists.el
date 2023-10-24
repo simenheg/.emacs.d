@@ -44,6 +44,7 @@
         org-kill-line
         org-open-line
         org-self-insert-command
+        org-set-effort
         org-todo
         org-transpose-words
         org-yank

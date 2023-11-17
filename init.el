@@ -104,7 +104,6 @@
 (global-prettify-symbols-mode   1) ; Pretty symbols (e.g. lambda => λ)
 (global-subword-mode            1) ; Better editing of camelCasedWords
 (prefer-coding-system      'utf-8) ; Always prefer UTF-8
-(show-paren-mode                1) ; Highlight matching parenthesis
 (yas-global-mode                1) ; YASnippet everywhere
 
 ;; Add lisp/ and all subdirectories to the load-path

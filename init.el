@@ -632,6 +632,8 @@ nonstopmode' -pdf -f %f"))))
    (project-magit "Magit" ?m)))
 
 ;; -------------------------------------------------------- [ Python ]
+(exec-path-from-shell-copy-env "WORKON_HOME")
+
 (add-hook 'python-mode-hook 'eglot-ensure)
 
 (add-hook

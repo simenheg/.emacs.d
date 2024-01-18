@@ -202,6 +202,7 @@
 ;; ----------------------------------------------- [ Clean Mode Line ]
 (defvar clean-mode-line-alist
   '((auto-fill-function . "")
+    (blacken-mode . "")
     (company-mode . "")
     (counsel-mode . "")
     (editorconfig-mode . "")
@@ -646,7 +647,8 @@ nonstopmode' -pdf -f %f"))))
     prettify-symbols-alist
     '(("!=" . ?≠)
       ("<=" . ?≤)
-      (">=" . ?≥)))))
+      (">=" . ?≥)))
+   (blacken-mode 1)))
 
 (add-hook
  'pyvenv-post-activate-hooks

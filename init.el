@@ -314,6 +314,9 @@
  (lambda ()
    (setq mode-line-misc-info nil)))
 
+;; --------------------------------------------------------- [ ElDoc ]
+(setq eldoc-echo-area-use-multiline-p nil)
+
 ;; --------------------------------------------------------- [ Emacs ]
 ;; Set EDITOR environment variable
 (setenv "EDITOR" "emacs -Q")

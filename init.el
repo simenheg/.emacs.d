@@ -249,6 +249,12 @@
 
 (add-hook 'prog-mode-hook (lambda () (company-mode 1)))
 
+;; ----------------------------------------------------------- [ CSS ]
+(add-hook
+ 'css-mode-hook
+ (lambda ()
+   (setq css-indent-offset 2)))
+
 ;; ----------------------------------------------------------- [ CSV ]
 (add-hook
  'csv-mode-hook

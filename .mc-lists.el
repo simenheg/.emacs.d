@@ -40,6 +40,7 @@
         org-delete-char
         org-delete-indentation
         org-end-of-line
+        org-fill-paragraph
         org-force-self-insert
         org-kill-line
         org-open-line

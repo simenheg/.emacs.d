@@ -29,6 +29,7 @@
    cycle-quotes
    editorconfig
    exec-path-from-shell
+   flymake-eslint
    focus
    fuel
    geiser
@@ -420,11 +421,15 @@
  'js2-mode-hook
  (lambda ()
    (setq-local fill-column 79)
+   (setq-local js2-ignored-warnings '("msg.missing.semi"))
    (local-set-key (kbd "C-j") 'js2-line-break)
    (local-set-key (kbd "RET") 'js2-line-break)))
 
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-(add-to-list 'auto-mode-alist '("\\.webapp\\'" . json-mode))
+(add-hook 'js-mode-hook (lambda () (setq-local fill-column 79)))
+
+(add-hook 'js-mode-hook #'flymake-eslint-enable)
+(add-hook 'mhtml-mode-hook #'flymake-eslint-enable)
+(add-hook 'web-mode-hook #'flymake-eslint-enable)
 
 ;; ---------------------------------------------------------- [ JSON ]
 (dolist (filename '(".arcconfig" ".arclint" ".babelrc" ".bowerrc"

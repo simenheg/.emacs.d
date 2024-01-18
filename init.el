@@ -327,6 +327,9 @@
 ;; Move point to the first newly duplicated line
 (setq duplicate-line-final-position 1)
 
+;; Show opening parenthesis when it is offscreen
+(setq show-paren-context-when-offscreen 'overlay)
+
 ;; Don't bother to ask unless the file *really* is large (100 MB+)
 (setq large-file-warning-threshold 100000000)
 

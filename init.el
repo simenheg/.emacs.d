@@ -552,6 +552,8 @@
 ;; Ignore irrelevant holidays
 (setq
  holiday-bahai-holidays nil
+ holiday-christian-holidays nil
+ holiday-general-holidays nil
  holiday-hebrew-holidays nil
  holiday-islamic-holidays nil
  holiday-oriental-holidays nil)

@@ -57,7 +57,6 @@
    undo-tree
    web-mode
    xref-js2
-   yaml-mode
    yasnippet))
 
 (setq package-pinned-packages
@@ -677,7 +676,8 @@ nonstopmode' -pdf -f %f"))))
 (setq
  treesit-language-source-alist
  '((dockerfile
-    "https://github.com/camdencheek/tree-sitter-dockerfile")))
+    "https://github.com/camdencheek/tree-sitter-dockerfile")
+   (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
 ;; ------------------------------------------------------------ [ VC ]
 (declare-function log-edit-insert-message-template "log-edit" ())
@@ -710,6 +710,10 @@ nonstopmode' -pdf -f %f"))))
    (push "endeditable" web-mode-django-control-blocks)
    (setq web-mode-django-control-blocks-regexp
          (regexp-opt web-mode-django-control-blocks t))))
+
+;; ---------------------------------------------------------- [ YAML ]
+(add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-ts-mode))
+(add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
 
 ;;--------------------------------------------------------- [ Custom ]
 (custom-set-faces

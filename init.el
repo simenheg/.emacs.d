@@ -191,6 +191,8 @@
      (setq-local compile-command "make devel -C .."))))
 
 ;; ------------------------------------------------------ [ Calendar ]
+(require 'norwegian-holidays)
+
 (setq calendar-location-name  "Oslo, Norway"
       calendar-latitude       60.0
       calendar-longitude      10.7

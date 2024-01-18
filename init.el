@@ -692,7 +692,7 @@ nonstopmode' -pdf -f %f"))))
 (add-hook 'log-view-mode-hook (lambda () (hl-line-mode 1)))
 
 ;; ----------------------------------------------------------- [ Vue ]
-(add-to-list 'auto-mode-alist '("\\.vue\\'" . mhtml-mode))
+(add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
 
 ;; ------------------------------------------------------ [ Web mode ]
 (add-to-list 'auto-mode-alist '("\\.jinja\\'" . web-mode))
@@ -708,6 +708,7 @@ nonstopmode' -pdf -f %f"))))
  (lambda ()
    (defvar web-mode-django-control-blocks)
    (defvar web-mode-django-control-blocks-regexp)
+   (setq-local fill-column 79)
    (push "editable" web-mode-django-control-blocks)
    (push "endeditable" web-mode-django-control-blocks)
    (setq web-mode-django-control-blocks-regexp

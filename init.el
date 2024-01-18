@@ -257,6 +257,7 @@
 (add-hook
  'csv-mode-hook
  (lambda ()
+   (setq csv-confirm-region nil)
    (csv-guess-set-separator)
    (declare-function csv-align-fields "csv-mode" (hard beg end))
    (csv-align-fields nil (point-min) (point-max))

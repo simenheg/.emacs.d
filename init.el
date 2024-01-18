@@ -27,7 +27,6 @@
    counsel
    csv-mode
    cycle-quotes
-   debbugs
    editorconfig
    exec-path-from-shell
    focus
@@ -54,9 +53,7 @@
    smex
    sql-indent
    terraform-mode
-   undo-tree
    web-mode
-   xref-js2
    yasnippet))
 
 (setq package-pinned-packages

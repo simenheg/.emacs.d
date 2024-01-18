@@ -28,7 +28,6 @@
    csv-mode
    cycle-quotes
    debbugs
-   dockerfile-mode
    editorconfig
    exec-path-from-shell
    focus
@@ -298,6 +297,9 @@
  dired-recursive-copies 'always        ; Don't ask, just copy
  global-auto-revert-non-file-buffers t ; Auto-refresh the file list
  image-dired-show-all-from-dir-max-files 500)
+
+;; ---------------------------------------------------- [ Dockerfile ]
+(add-to-list 'auto-mode-alist '("\\Dockerfile\\'" . dockerfile-ts-mode))
 
 ;; ------------------------------------------------------- [ DocView ]
 ;; Auto-update document files
@@ -670,6 +672,12 @@ nonstopmode' -pdf -f %f"))))
 ;; ----------------------------------------------------- [ Timeclock ]
 ;; Don't ask for a reason when clocking out
 (setq timeclock-get-reason-function nil)
+
+;; --------------------------------------------------- [ Tree-sitter ]
+(setq
+ treesit-language-source-alist
+ '((dockerfile
+    "https://github.com/camdencheek/tree-sitter-dockerfile")))
 
 ;; ------------------------------------------------------------ [ VC ]
 (declare-function log-edit-insert-message-template "log-edit" ())

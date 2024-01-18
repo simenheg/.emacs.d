@@ -14,8 +14,8 @@
  package-archive-priorities
  '(("GNU" . 4)
    ("NonGNU" . 3)
-   ("MELPA Stable" . 2)
-   ("MELPA" . 1)))
+   ("MELPA" . 2)
+   ("MELPA Stable" . 1)))
 
 (setq
  package-selected-packages

@@ -58,8 +58,9 @@
    yasnippet))
 
 (setq package-pinned-packages
-      '((json-mode . "GNU")
-        (hcl-mode . "MELPA")))
+      '((hcl-mode . "MELPA")
+        (json-mode . "GNU")
+        (magit . "MELPA")))
 
 (unless (file-exists-p package-user-dir)
   (package-refresh-contents))

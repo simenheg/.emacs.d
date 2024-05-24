@@ -10,6 +10,7 @@
         beginning-of-indentation-or-line
         c-electric-delete-forward
         c-electric-semi&comma
+        c-electric-star
         c-indent-line-or-region
         comment-dwim
         complete-symbol

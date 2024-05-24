@@ -31,7 +31,6 @@
    exec-path-from-shell
    flymake-eslint
    focus
-   fuel
    geiser
    gnuplot
    jit-spell
@@ -392,10 +391,6 @@
 
 (define-eshell-command yarn-watch
   "*yarn-watch*" "yarn run watch")
-
-;; -------------------------------------------------------- [ Factor ]
-(setq fuel-factor-root-dir "~/src/factor")
-(add-hook 'factor-mode-hook (lambda () (setq-local fill-column 64)))
 
 ;; ------------------------------------------------------- [ Flymake ]
 (with-eval-after-load 'flymake

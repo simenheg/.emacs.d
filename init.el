@@ -31,7 +31,6 @@
    exec-path-from-shell
    flymake-eslint
    focus
-   gnuplot
    jit-spell
    js2-mode
    json-mode

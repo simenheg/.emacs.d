@@ -31,7 +31,6 @@
    exec-path-from-shell
    flymake-eslint
    focus
-   geiser
    gnuplot
    jit-spell
    js2-mode
@@ -462,7 +461,6 @@
 (mapc
  (lambda (m) (add-hook m 'setup-lisp))
  '(emacs-lisp-mode-hook
-   geiser-repl-mode-hook
    ielm-mode-hook
    inferior-lisp-mode-hook
    inferior-scheme-mode-hook
@@ -663,10 +661,6 @@ nonstopmode' -pdf -f %f"))))
     (kbd "C-c C-c") 'restclient-http-send-current-stay-in-window)))
 
 (add-hook 'restclient-test-mode-hook #'flymake-mode)
-
-;; -------------------------------------------------------- [ Scheme ]
-(setq geiser-active-implementations '(guile)
-      geiser-repl-query-on-kill-p nil)
 
 ;; ----------------------------------------------------------- [ SQL ]
 (setq-default sql-product 'postgres)

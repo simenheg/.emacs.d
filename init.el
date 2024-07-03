@@ -27,7 +27,6 @@
    counsel
    csv-mode
    cycle-quotes
-   editorconfig
    exec-path-from-shell
    flymake-eslint
    focus
@@ -203,7 +202,6 @@
     (blacken-mode . "")
     (company-mode . "")
     (counsel-mode . "")
-    (editorconfig-mode . "")
     (eldoc-mode . "")
     (emacs-lisp-mode . "el")
     (flymake-mode . "")

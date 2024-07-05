@@ -35,7 +35,6 @@
    json-mode
    know-your-http-well
    lorem-ipsum
-   lua-mode
    magit
    markdown-mode
    multiple-cursors
@@ -131,7 +130,7 @@
 (global-set-key (kbd "C-w")     'kill-region-or-backward-delete-sexp)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "C-x b")   'ivy-switch-buffer)
-(global-set-key (kbd "C-x k")   'kill-this-buffer)
+(global-set-key (kbd "C-x k")   'kill-current-buffer)
 (global-set-key (kbd "C-x p f") 'counsel-project-find-file)
 (global-set-key (kbd "C-x p m") 'magit-status)
 (global-set-key (kbd "C-x p p") 'counsel-project-switch-project)
@@ -282,21 +281,11 @@
    (setq dired-listing-switches "-alhv")
 
    (define-key dired-mode-map
-     (vector 'remap 'dired-do-print) 'previous-line)
-
-   (define-key dired-mode-map
-     (vector 'remap 'end-of-buffer) 'dired-end-of-buffer)
-
-   (define-key dired-mode-map
-     (vector 'remap 'beginning-of-buffer) 'dired-beginning-of-buffer)
-
-   (define-key dired-mode-map
      (vector 'remap 'dired-goto-file) 'find-file)))
 
-(setq
- dired-recursive-copies 'always        ; Don't ask, just copy
- global-auto-revert-non-file-buffers t ; Auto-refresh the file list
- image-dired-show-all-from-dir-max-files 500)
+(setq dired-movement-style 'cycle)
+(setq dired-recursive-copies 'always)
+(setq global-auto-revert-non-file-buffers t)
 
 ;; ---------------------------------------------------- [ Dockerfile ]
 (add-to-list 'auto-mode-alist '("\\Dockerfile\\'" . dockerfile-ts-mode))
@@ -467,20 +456,7 @@
    slime-repl-mode-hook))
 
 ;; ----------------------------------------------------------- [ Lua ]
-;; Basic LӦVE compilation support
-(add-hook
- 'lua-mode-hook
- (lambda ()
-   (global-set-key "\C-c\C-c" 'compile)
-   (when (file-exists-p "main.lua")
-     (setq-local compile-command "love . ")
-     (add-to-list
-      'compilation-error-regexp-alist 'love t)
-     (add-to-list
-      'compilation-error-regexp-alist-alist
-      '(love
-        "^Error: Syntax error: \\(.*?\\):\\([0-9]+\\):.*$" 1 2)
-      t))))
+(add-to-list 'auto-mode-alist '("\\.lua\\'" . lua-ts-mode))
 
 ;; --------------------------------------------------------- [ Magit ]
 (setq git-commit-summary-max-length 50)
@@ -676,6 +652,7 @@ nonstopmode' -pdf -f %f"))))
  treesit-language-source-alist
  '((dockerfile
     "https://github.com/camdencheek/tree-sitter-dockerfile")
+   (lua "https://github.com/tree-sitter-grammars/tree-sitter-lua")
    (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
 ;; ------------------------------------------------------------ [ VC ]

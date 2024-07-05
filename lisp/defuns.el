@@ -54,31 +54,6 @@ point to beginning of line."
   (interactive "p")
   (inc-next-number (* (or arg 1) -1)))
 
-(declare-function dired-next-line "dired" (arg))
-
-(defun dired-beginning-of-buffer ()
-  "Jump to the first file listed in Dired."
-  (interactive)
-  (goto-char (point-min))
-  (dired-next-line 2))
-
-(defun dired-end-of-buffer ()
-  "Jump to the last file listed in Dired."
-  (interactive)
-  (goto-char (point-max))
-  (dired-next-line -1))
-
-(defadvice dired-next-line (after dired-next-line (arg) activate)
-  "Don't move past the last file in Dired."
-  (when (= (point-max) (point))
-    (dired-previous-line arg)))
-
-(defadvice dired-previous-line (around dired-previous-line (arg)
-                                       activate)
-  "Don't move before the first in Dired."
-  (when (< 3 (line-number-at-pos))
-    ad-do-it))
-
 (defun fmt (symbols)
   "Insert '(format t \"x1: ~a, x2: ~a, ..., xn: ~a~%)' for every
 x separated by a space in `symbols'."

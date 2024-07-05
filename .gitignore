@@ -6,7 +6,7 @@ eln-cache/
 elpa/
 eshell/
 history
-ielm-history.el
+ielm-history.eld
 image-dired/
 lisp/private-stuff.el
 mail-drafts/

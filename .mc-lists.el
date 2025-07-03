@@ -63,6 +63,7 @@
         sgml-slash
         transpose-sexps
         transpose-words
+        wdired--self-insert
         yaml-electric-dash-and-dot
         yas-expand
         ))

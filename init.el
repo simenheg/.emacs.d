@@ -652,6 +652,7 @@ nonstopmode' -pdf -f %f"))))
  treesit-language-source-alist
  '((dockerfile
     "https://github.com/camdencheek/tree-sitter-dockerfile")
+   (go "https://github.com/tree-sitter/tree-sitter-go")
    (lua "https://github.com/tree-sitter-grammars/tree-sitter-lua")
    (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
